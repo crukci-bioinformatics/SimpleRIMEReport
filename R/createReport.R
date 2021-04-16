@@ -13,13 +13,20 @@
 #' @import Biostrings
 #' @import openxlsx
 #' @import cowplot
-#' @import tidyverse
 #'
 #' @export createReport
 
 createReport <- function(sampleTable, dataDir){
+    
+    # check that all the bait proteins were detected
+    sampleTable <- checkBaitDetection(sampleTable, data_directory)
+    
+    if(all(is.na(sampleTable$BaitProteinID))){
+        stop("There are no samples in which the bait protein provided was ",
+             "detected.")
+    }
 
-    # Load from preconstructed SwissProt file
+    # Get annotation
     annotTab <- makeAnnotation(sampleTable, dataDir)
     
     # Get fasta seq from SwissProt file 
