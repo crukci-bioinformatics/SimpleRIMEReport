@@ -1,4 +1,11 @@
-# split the file name and extract the sample name and protein
+#' Extract information from file name
+#' 
+#'  This function splits the file name and extracts the sample name and protein
+#'  
+#' @import dplyr
+#' @import stringr
+#' @import tibble
+#' @importFrom magrittr %>%
 filenametotable <- function(fileName){
     dat <- str_split(fileName, "_")[[1]]
     len <- length(dat)
@@ -50,9 +57,13 @@ filenametotable <- function(fileName){
 #' @examples
 #'
 #'
-#' @import tidyverse
-#' @importFrom AnnotationHub AnnotationHub query
-#' @importFrom AnnotationDbi select
+#' @import AnnotationDbi
+#' @import AnnotationHub
+#' @import dplyr
+#' @import purrr
+#' @import stringr
+#' @import readr
+#' @importFrom magrittr %>%
 #'
 #' @export createSampleTable
 createSampleTable <- function(dataDir){
