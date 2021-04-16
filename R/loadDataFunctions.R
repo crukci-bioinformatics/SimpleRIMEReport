@@ -19,7 +19,7 @@ loadProteinData <- function(sampleTab, dataDir){
 checkProteins <- function(SampleName, BaitProteinName, BaitProteinUniProtID, 
                           ProteinDat){
     isGood <- str_detect(BaitProteinName, "^[Ii][Gg][Gg]$") |
-        BaitProteinUniProtID%in%ProteinDat$Accession
+                    BaitProteinUniProtID%in%ProteinDat$Accession
     if(!isGood){
         warning("The bait protein ", BaitProteinName, " was not detected in ",
                 "the sample ", SampleName, ". The results for this sample ",
@@ -85,6 +85,7 @@ createFastaTable <- function(sampleTab){
         select(BaitProteinUniProtID) %>% 
         distinct() %>% 
         filter(!is.na(BaitProteinUniProtID)) %>% 
+        filter(!str_detect(BaitProteinUniProtID, "^[Ii][Gg][Gg]$")) %>% 
         left_join(readRDS("annotation/SwissProtAnnotationTable.rds"), 
                   by=c("BaitProteinUniProtID"="Accessions")) %>% 
         mutate(ProteinSeq=map(Sequence, AAStringSet)) %>%  
