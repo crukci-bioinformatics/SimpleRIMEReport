@@ -94,7 +94,7 @@ coveragePlot <- function(SampleName, BaitProteinName, BaitProteinUniProtID,
     message("Generate plots for ", SampleName)
 
     features <- PeptideData %>%
-        filter(`Protein Group Accessions` == BaitProteinUniProtID) %>%
+        filter(`Master Protein Accessions` == BaitProteinUniProtID) %>%
         pull(Sequence) %>%
         toupper() %>%
         unique() %>%
