@@ -18,12 +18,15 @@ addPlots <- function(wb, plotsObj){
 }
     
 # header style for the tables
-hs <- createStyle(fontColour = "#ffffff", fgFill = "#4F80BD",
+hs <- function(){
+    createStyle(fontColour = "#ffffff", fgFill = "#4F80BD",
                   halign = "center", valign = "center",
                   border = "TopBottomLeftRight")
+}
 
 # Full data tables for each sample
-addFullTables <- function(wb, protData, headStyle=hs){
+addFullTables <- function(wb, protData){
+    headStyle <- hs()
     for(sheetNum in seq_along(protData)){
         addWorksheet(wb, sampleTable$SampleName[sheetNum])
         showGridLines(wb, sheet = sheetNum, showGridLines = TRUE)
@@ -39,7 +42,8 @@ addFullTables <- function(wb, protData, headStyle=hs){
 }
 
 # Combined data table - full table
-addCombinedTable <- function(wb, combTab, sheetNum, headStyle=hs){
+addCombinedTable <- function(wb, combTab, sheetNum){
+    headStyle <- hs()
     addWorksheet(wb, "Combined Data")
     writeData(wb, sheet = sheetNum, x = combTab, headerStyle = headStyle)
     setColWidths(wb, sheet = sheetNum, cols = 1:3, widths = 16) 
@@ -49,7 +53,8 @@ addCombinedTable <- function(wb, combTab, sheetNum, headStyle=hs){
 }
 
 # Filtered data table
-addFilteredTable <- function(wb, filtTab, sheetNum, headStyle=hs){
+addFilteredTable <- function(wb, filtTab, sheetNum){
+    headStyle <- hs()
     addWorksheet(wb, "Filtered Data")
     writeData(wb, sheet = sheetNum, x = filtTab, headerStyle = headStyle)
     setColWidths(wb, sheet = sheetNum, cols = 1:3, widths = 16) 
