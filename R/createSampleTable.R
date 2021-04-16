@@ -3,7 +3,9 @@ filenametotable <- function(fileName){
     dat <- str_split(fileName, "_")[[1]]
     len <- length(dat)
     tibble(ProteinFile=fileName,
-           PeptideFile=str_replace(ProteinFile, "proteingroups", "psms"), 
+           PeptideFile=str_replace(ProteinFile, 
+                                   "_Proteins.txt", 
+                                   "_PeptideGroups.txt"), 
            SampleName=str_c(dat[6:(len-2)], collapse="_"),
            BaitProteinName=dat[len-1])
 }
@@ -30,13 +32,15 @@ filenametotable <- function(fileName){
 #'                   This is only used in the plot titles, it could be anything
 #' BaitProteinUniProtID - the UniProt ID for the bait protein, e.g. P03372, P55317
 #'                       this is used to look up the fasta sequence
-#' The script will attempt to guess the SampleName and BaitProteinName from the
-#' the protein file name.
 #' 
-#' It is important to check the details contained in the table, and modify if
+#' The script will attempt to deduce the SampleName and BaitProteinName from the
+#' the file name. It will also try to determine the UniProt ID from the bait
+#' protein name.
+#' 
+#' It is important to check the details contained in the table, and modify it if
 #' necessary, prior to generating the report. In particular check the bait
-#' protein name and UniProt ID. The negative control should be called "Control"
-#' or "IgG" and have no UniProtID.
+#' protein name and UniProt ID. The negative control should be called "Control",
+#' "Empty" or "IgG" and have no UniProtID.
 #'
 #' @param dataDir character; Path to directory containing the Proteome
 #'   Discoverer output files
@@ -47,12 +51,23 @@ filenametotable <- function(fileName){
 #'
 #'
 #' @import tidyverse
+#' @importFrom AnnotationHub AnnotationHub query
+#' @importFrom AnnotationDbi select
 #'
 #' @export createSampleTable
 createSampleTable <- function(dataDir){
-    tab <- list.files(dataDir, pattern="proteingroups.txt$") %>%
-        map_df(filenametotable) %>% 
-        mutate(BaitProteinUniProtID="")
+    ah <- AnnotationHub()
+    annot <- query(ah, c("Homo sapiens", "EnsDb", 103))[[1]]
+    tab <- list.files(dataDir, pattern="_Proteins.txt$") %>%
+        map_df(filenametotable)
+    uid <- AnnotationDbi::select(annot, tab$BaitProteinName, 
+           c("SYMBOL", "UNIPROTDB", "UNIPROTID"),
+           "SYMBOL") %>% 
+        dplyr::filter(UNIPROTDB=="SWISSPROT") %>%
+        mutate(UNIPROTID = str_remove(UNIPROTID, "\\.[0-9]+$")) %>% 
+        group_by(SYMBOL) %>% 
+        summarise(BaitProteinUniProtID = str_c(UNIPROTID, collapse = "/"))
+    tab <- left_join(tab, uid, c(BaitProteinName="SYMBOL"))
     outnam <- str_c(dataDir, "/", basename(dataDir), "_sample_details.csv")
     write_csv(tab, outnam)
     return(tab)
