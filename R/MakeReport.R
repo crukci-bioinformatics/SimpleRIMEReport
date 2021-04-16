@@ -13,8 +13,8 @@ source("createWorkBookFunctions.R")
 # 1. Set Input Parameters
 ################################################################################
 
-data_directory <- "../TEST_RIME_SCRIPT/PR1001/"
-# species_id <- as.numeric(9606)
+data_directory <- "../data"
+species_id <- as.numeric(9606)
 # output file name
 outputFileName <- str_c(data_directory, "/", 
                         basename(data_directory), ".report.xlsx")
