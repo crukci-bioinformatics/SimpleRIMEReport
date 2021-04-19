@@ -1,30 +1,18 @@
-# get fasta sequence from uniprot using Accession
-getFasta <- function(UniProtAccession, species_id, upCon){
-    #hs <- UniProt.ws::UniProt.ws(taxId = species_id)
-    aaSeq <- UniProt.ws::select(upCon, UniProtAccession, "SEQUENCE", "UNIPROTKB") %>%
-        pull(SEQUENCE) %>%   
-        AAStringSet()
-}
-
-makeFastaTable <- function(sampleTab, species_id, upCon){
-    sampleTab %>% 
-        select(BaitProteinUniProtID) %>% 
-        distinct() %>% 
-        filter(!is.na(BaitProteinUniProtID)) %>% 
-        mutate(ProteinSeq=map(BaitProteinUniProtID, 
-                              getFasta, 
-                              species_id=species_id,
-                              upCon=upCon))
-}
-
+#' Create fasta table
+#' 
+#' Creates a table with the fasta sequence for each bait protein for the report
+#' @name createFastaTable
+#' 
+#' @import dplyr
+#' @import purrr
+#' @import readr
+#' @importFrom Biostrings AAStringSet
 createFastaTable <- function(sampleTab){
     sampleTab %>% 
         select(BaitProteinUniProtID) %>% 
         distinct() %>% 
         filter(!is.na(BaitProteinUniProtID)) %>% 
-        filter(!str_detect(BaitProteinUniProtID, "^[Ii][Gg][Gg]$")) %>% 
-        left_join(readRDS("annotation/SwissProtAnnotationTable.rds"), 
-                  by=c("BaitProteinUniProtID"="Accessions")) %>% 
-        mutate(ProteinSeq=map(Sequence, AAStringSet)) %>%  
+        left_join(annot, by=c("BaitProteinUniProtID"="Accessions")) %>% 
+        mutate(ProteinSeq = map(Sequence, AAStringSet)) %>% 
         select(BaitProteinUniProtID, ProteinSeq)
 }
