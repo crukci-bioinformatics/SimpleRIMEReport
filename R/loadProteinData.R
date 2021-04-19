@@ -27,17 +27,3 @@ loadProteinData <- function(sampleTab, dataDir){
         set_names(sampleTab$SampleName)
 }
 
-getProteinTables <- function(sampleTab, dataDir, annot){
-    loadProteinData(sampleTab, dataDir) %>%   
-        map(left_join, annot, by=c("Accession"="Accessions")) %>% 
-        map(select, Accession, Gene, `Gene Symbol`=GeneSymbol, 
-            Description, everything())
-}
-
-# load peptide data. Each table into a element of a list
-getPeptideTables <- function(sampleTab, dataDir){
-    str_c(dataDir, "/", sampleTab$PeptideFile) %>% 
-        map(read_tsv, col_types = cols()) %>% 
-        set_names(sampleTab$SampleName)
-}
-
