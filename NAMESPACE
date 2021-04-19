@@ -2,11 +2,10 @@
 
 export(createReport)
 export(createSampleTable)
-import(AnnotationDbi)
-import(AnnotationHub)
 import(dplyr)
 import(purrr)
 import(readr)
 import(stringr)
 import(tibble)
+importFrom(Biostrings,AAStringSet)
 importFrom(magrittr,"%>%")
