@@ -32,26 +32,26 @@ createReport <- function(sampleTable, dataDir){
     }
 
     # Get annotation
-    annotTab <- makeAnnotation(sampleTable, dataDir)
+    annotTab <- makeAnnotation(sampleTable)
 
-    # # Get fasta seq from SwissProt file 
-    # fastaSeqTable <- createFastaTable(sampleTable)
-    # 
-    # # load data
-    # protein_data <- getProteinTables(sampleTable, dataDir, annotTab)
-    # peptide_data <- getPeptideTables(sampleTable, dataDir)
-    # 
-    # # make merged tables
-    # combined_data <- combineProteinTables(sampleTable, dataDir, annotTab)
-    # filtered_data <- filterCombinedTable(sampleTable, dataDir, annotTab)
-    # 
-    # # make plots
-    # coveragePlots <- makeCoveragePlots(sampleTable, peptide_data, fastaSeqTable)
-    # 
-    # # make workbook
-    # makeWorkBook(outputFileName,
-    #                    coveragePlots,
-    #                    protein_data,
-    #                    combined_data,
-    #                    filtered_data)
+    # Get fasta seq from SwissProt file
+    fastaSeqTable <- createFastaTable(sampleTable)
+
+    # load data
+    protein_data <- getProteinTables(sampleTable, dataDir, annotTab)
+    peptide_data <- getPeptideTables(sampleTable, dataDir)
+
+    # make merged tables
+    combined_data <- combineProteinTables(sampleTable, dataDir, annotTab)
+    filtered_data <- filterCombinedTable(sampleTable, dataDir, annotTab)
+
+    # make plots
+    coveragePlots <- makeCoveragePlots(sampleTable, peptide_data, fastaSeqTable)
+
+    # make workbook
+    makeWorkBook(outputFileName,
+                       coveragePlots,
+                       protein_data,
+                       combined_data,
+                       filtered_data)
 }
