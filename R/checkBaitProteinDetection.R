@@ -27,8 +27,7 @@ checkProtein <- function(SampleName, BaitProteinName, BaitProteinUniProtID,
 #' @importFrom magrittr %>%
 checkBaitDetection <- function(sampleTab){
     areGood <- sampleTab %>% 
-        mutate(ProteinDat = map(ProteinFile, read_tsv)) %>%   
-        #dplyr::select(SampleName, BaitProteinName, BaitProteinUniProtID, ProteinDat) %>% 
+        mutate(ProteinDat = map(ProteinFile, read_tsv, col_type = cols())) %>%
         pmap(checkProtein) %>%   
         unlist()
     return(sampleTab[areGood,])
