@@ -1,0 +1,51 @@
+library(tidyverse)
+
+# The purpose of the script is to create an annotation object from UniProt. 
+# This object is saved as an internal data source and is used by the package
+# annotate the data set. This save having to use Uniprot.ws, which can be 
+# quite slow. It unforunatley does create a very large data object.
+# First you need to download SwissProt from:
+#
+# ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz
+# 
+# This file is > 500Mb, so you should then filter it before running this script:
+#    zcat uniprot_sprot.dat.gz | 
+#      grep -E "^ID|^AC|^OS|^GN|^DE|^SQ|^[[:blank:]]"  | 
+#      gzip -c - > uniprot_sprot.trim.dat.gz 
+
+keepSpecies <- "Homo sapiens|Mus musculus|Rattus|Drosophila|Caenorhabditis elegans"
+
+spTab <- read_tsv("~/Downloads/uniprot_sprot.trim.dat.gz", 
+                 col_names=FALSE, 
+                 trim_ws = FALSE) %>%  
+    separate(X1, c("Code", "Value"), extra = "merge") 
+
+annot <- spTab %>%  
+    filter(Code%in%c("ID", "AC", "GN", "DE", "OS", "SQ", "")) %>%  
+    filter(Value!="") %>%  
+    mutate(Gene=ifelse(Code=="ID", Value, NA)) %>%  
+    mutate(Gene=str_remove(Gene, " .*")) %>%  
+    fill(Gene, .direction = "down") %>%  
+    filter(! (Code=="DE" & str_detect(Value, "RecName", negate = TRUE)))  %>%  
+    mutate(Code=str_replace(Code, "^$", "SQ") ) %>%  
+    filter(!( Code == "SQ" & str_detect(Value, "SEQUENCE" ))) %>%  
+    group_by(Code, Gene) %>%  
+    summarise(Value=str_c(Value, collapse = " ")) %>%  
+    ungroup() %>% 
+    pivot_wider(names_from = Code, values_from = Value) %>%  
+    select(Accessions=AC, 
+           Gene, 
+           Description=DE, 
+           GeneSymbol=GN, 
+           Sequence=SQ,
+           Species=OS) %>%  
+    filter(str_detect(Species, keepSpecies)) %>% 
+    select(-Species) %>% 
+    mutate(Accessions=str_remove(Accessions, "; *$")) %>% 
+    separate_rows(Accessions, sep="; ") %>%  
+    mutate(GeneSymbol=str_remove_all(GeneSymbol, "^[[:alpha:]]+=|;.*")) %>%  
+    mutate(Description=str_remove_all(Description, "RecName: |;$")) %>%  
+    mutate(Description=str_remove_all(Description, "^Full=|;.*$")) %>%  
+    mutate(Sequence=str_remove_all(Sequence, " "))
+
+usethis::use_data(annot, internal = TRUE, overwrite = TRUE)
