@@ -8,9 +8,9 @@
 #' @import readr
 
 makeAnnotation <- function(sampleTab, dataDir){
-    map_df(sampleTab$ProteinFile, read_tsv, col_types = cols()) %>%  
+    map_df(sampleTab$ProteinFile, read_tsv, col_types = cols()) %>%
         select(Accessions=Accession) %>%  
         distinct() %>%   
-        left_join(annot, by="Accessions") %>% 
+        left_join(annot, by="Accessions") %>%
         select(-Sequence)
 }
