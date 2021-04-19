@@ -57,8 +57,6 @@ filenametotable <- function(fileName){
 #' @examples
 #'
 #'
-#' @import AnnotationDbi
-#' @import AnnotationHub
 #' @import dplyr
 #' @import purrr
 #' @import stringr
@@ -67,18 +65,14 @@ filenametotable <- function(fileName){
 #'
 #' @export createSampleTable
 createSampleTable <- function(dataDir){
-    ah <- AnnotationHub()
-    annot <- query(ah, c("Homo sapiens", "EnsDb", 103))[[1]]
-    tab <- list.files(dataDir, pattern="_Proteins.txt$") %>%
+    tab <- list.files(dataDir, pattern = "_Proteins.txt$") %>%
         map_df(filenametotable)
-    uid <- AnnotationDbi::select(annot, tab$BaitProteinName, 
-           c("SYMBOL", "UNIPROTDB", "UNIPROTID"),
-           "SYMBOL") %>% 
-        dplyr::filter(UNIPROTDB=="SWISSPROT") %>%
-        mutate(UNIPROTID = str_remove(UNIPROTID, "\\.[0-9]+$")) %>% 
-        group_by(SYMBOL) %>% 
-        summarise(BaitProteinUniProtID = str_c(UNIPROTID, collapse = "/"))
-    tab <- left_join(tab, uid, c(BaitProteinName="SYMBOL"))
+    uid <- filter(annot, GeneSymbol%in%tab$BaitProteinName) %>% 
+        select(BaitProteinName = GeneSymbol, Accessions) %>% 
+        group_by(BaitProteinName) %>% 
+        summarise(BaitProteinUniProtID = str_c(Accessions, collapse="/")) %>% 
+        ungroup()
+    tab <- left_join(tab, uid, by="BaitProteinName")
     outnam <- str_c(dataDir, "/", basename(dataDir), "_sample_details.csv")
     write_csv(tab, outnam)
     return(tab)
