@@ -133,5 +133,5 @@ makeWorkBook <- function(outputFile, plotsList, protData, combData, filtData){
     wkbk <- addFilteredTable(wkbk, filtData, nSht)
     
     # save workbook
-    saveWorkbook(wkbk, outputFileName, overwrite = TRUE)
+    saveWorkbook(wkbk, outputFile, overwrite = TRUE)
 }
