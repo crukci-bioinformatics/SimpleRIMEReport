@@ -31,8 +31,6 @@ createReport <- function(sampleTable, dataDir){
              "detected.")
     }
 
-
-
     # load data
     protein_data <- getProteinTables(sampleTable)
     peptide_data <- getPeptideTables(sampleTable)
@@ -42,7 +40,7 @@ createReport <- function(sampleTable, dataDir){
     filtered_data <- filterCombinedTable(sampleTable)
 
     # make plots
-    coveragePlots <- makeCoveragePlots(sampleTable, peptide_data, fastaSeqTable)
+    coveragePlots <- makeCoveragePlots(sampleTable, peptide_data)
 
     # make workbook
     makeWorkBook(outputFileName,
