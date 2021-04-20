@@ -54,4 +54,5 @@ createReport <- function(sampleTable, dataDir, outputFileName=NULL){
                  protein_data,
                  combined_data,
                  filtered_data)
+    message("Report written to ", outputFileName)
 }
