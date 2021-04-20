@@ -18,7 +18,7 @@
 # @import openxlsx
 # @import cowplot
 
-createReport <- function(sampleTable, dataDir){
+createReport <- function(sampleTable, dataDir, outputFileName=NULL){
     
     sampleTable <- sampleTable %>% 
         mutate(across(ends_with("File"), ~str_c(dataDir, "/", .x)))
@@ -43,9 +43,15 @@ createReport <- function(sampleTable, dataDir){
     coveragePlots <- makeCoveragePlots(sampleTable, peptide_data)
 
     # make workbook
+    if(is.null(outputFileName)){
+        outputFileName <- str_c(dataDir, 
+                                "/", 
+                                basename(dataDir),
+                                ".Simple_RIME_report.xlsx")
+    }
     makeWorkBook(outputFileName,
-                       coveragePlots,
-                       protein_data,
-                       combined_data,
-                       filtered_data)
+                 coveragePlots,
+                 protein_data,
+                 combined_data,
+                 filtered_data)
 }
