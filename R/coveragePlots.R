@@ -24,19 +24,17 @@ createFastaTable <- function(sampleTab){
 #' the overall coverage across the length of the protein.
 #' @name makeCoveragePlots
 #' @import dplyr
-#' @import GenomicRanges
 #' @import ggplot2
-#' @importFrom IRanges IRanges
 #' @importFrom magrittr %>%
 #' @import purrr
 #' @import stringr
 covPlot1 <- function(Protein_seq, features, plotTitle){
     # get percent coverage
     protWidth <- width(Protein_seq)
-    coverage <- GRanges("feature", IRanges(features$start, features$end)) %>%
-        GenomicRanges::reduce() %>%
-        width() %>%
-        sum()
+    coverage <-  map2(features$start, features$end, seq) %>%   
+        unlist() %>% 
+        unique() %>% 
+        length()
     Perct <- round(coverage / protWidth * 100, 2)
     SubTitle <- str_c("Number of Unique Peptides: ", 
                        nrow(features), 
@@ -177,8 +175,8 @@ coveragePlots <- function(SampleName, BaitProteinName, BaitProteinUniProtID,
 #' @importFrom magrittr %>%
 makeCoveragePlots <- function(sampleTab, peptideDat){
     fastaTab <- createFastaTable(sampleTab)
-    ewe <- sampleTab %>%   
+    sampleTab %>%   
         mutate(PeptideData=peptideDat) %>% 
-        inner_join(fastaTab) %>% 
+        inner_join(fastaTab, by="BaitProteinUniProtID") %>% 
         pmap(coveragePlots)
 }
