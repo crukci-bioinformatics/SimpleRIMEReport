@@ -31,19 +31,16 @@ createReport <- function(sampleTable, dataDir){
              "detected.")
     }
 
-    # Get annotation
-    annotTab <- makeAnnotation(sampleTable)
-
     # Get fasta seq from SwissProt file
     fastaSeqTable <- createFastaTable(sampleTable)
 
     # load data
-    protein_data <- getProteinTables(sampleTable, dataDir, annotTab)
-    peptide_data <- getPeptideTables(sampleTable, dataDir)
+    protein_data <- getProteinTables(sampleTable)
+    peptide_data <- getPeptideTables(sampleTable)
 
     # make merged tables
-    combined_data <- combineProteinTables(sampleTable, dataDir, annotTab)
-    filtered_data <- filterCombinedTable(sampleTable, dataDir, annotTab)
+    combined_data <- combineProteinTables(sampleTable)
+    filtered_data <- filterCombinedTable(sampleTable)
 
     # make plots
     coveragePlots <- makeCoveragePlots(sampleTable, peptide_data, fastaSeqTable)
