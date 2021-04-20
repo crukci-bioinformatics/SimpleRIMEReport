@@ -7,8 +7,8 @@
 addPlots(wb, plotsObj)
 }
 \description{
-This function adds the coverage plots to a new worksheet in the workbook. The 
-summary coverage map is always the same height, but the plot height for the 
-detailed coverage map needs to be calculated from the amino acid sequence 
+This function adds the coverage plots to a new worksheet in the workbook. The
+summary coverage map is always the same height, but the plot height for the
+detailed coverage map needs to be calculated from the amino acid sequence
 length for the bait protein.
 }

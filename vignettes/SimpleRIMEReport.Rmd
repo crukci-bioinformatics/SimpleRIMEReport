@@ -1,0 +1,117 @@
+---
+title: "Simple RIME Report"
+author: Ashley Sawle
+date: "`r format(Sys.Date(), '%m/%d/%Y')`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{SimpleRIMEReport}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteKeywords{Proteomics, TMT}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, echo=FALSE, results="hide"}
+knitr::opts_chunk$set(tidy = FALSE,
+                      cache = FALSE,
+                      dev = "png",
+                      message = FALSE, error = FALSE, warning = TRUE)
+``` 
+
+This document provides brief tutorial of the _SimpleRIMEReport_ package.
+
+The package generates a report in the form of an Excel workbook from the Protein
+and Peptides output of Proteome Discoverer.
+
+There are two steps to the process:
+
+1) Generate a sample sheet
+2) Generate the report
+
+After generating the sample sheet it is important to check the details to make 
+sure they are as you need them to be. In particular, the package will attempt
+to identify the correct UniProt ID for bait proteins, however, in some cases 
+the same Gene Symbol will be associated with multiple UniPort IDs and you should
+select the correct one. Furthermore, if a custom database has been used, then 
+the package will not able to identify the accession ID for the protein.
+
+# 1. Generate sample table
+
+The first step requires the directory that contains the PD outputs. It uses the
+file names to generate a sample table.
+
+The sample table will be  saved in the 'data_directory' as
+"XXXXX_sample_details.csv"
+
+The sample table will contain 5 columns:
+ProteinFile - the file name for 'protiengroups' data
+PeptideFile - the file name for 'psms' data
+SampleName - the name for the sample - this is used for the plot titles and
+             the names of the worksheets
+BaitProteinName - the protein name for the bait protein, e.g. ER, FOXA1 etc.
+                  This is only used in the plot titles, it could be anything
+BaitProteinUniProtID - the UniProt ID for the bait protein, e.g. P03372, P55317
+                      this is used to look up the fasta sequence
+The script will attempt to guess the SampleName and BaitProteinName from the
+the protein file name.
+
+The assumed structure of the protein file name is:
+QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_proteingroups.txt
+SampleName can include "_"
+e.g.
+  QE_HF_04092018_PR1025_SAN_Sample1_VEH_ARID2_proteingroups.txt
+gives
+  SampleName="Sample1_VEH"
+  BaitProteinName="ARID2"
+
+You'll need to check the sample sheet and modify as necessary before
+proceeding. The sample table can either be modified directly in R, or you can
+open the saved version in a spreadsheet (e.g. Excel) and edit it and the load it
+back into R.
+
+```{r eval=FALSE}
+library(SimpleRIMEReport)
+sampleData <- createSampleTable("My_Data_Directory")
+```
+
+This will create a table called `sampleData` and will save a copy of this to 
+`My_Data_Directory/My_Data_Directory_sample_details.csv`.
+
+If you edit the report in Excel, you will then need to reload the sample table:
+
+```{r}
+library(readr)
+sampleData <- read_csv("My_Data_Directory/My_Data_Directory_sample_details.csv")
+```
+
+# 3. Generate the report
+
+Once you have adjusted the sample table run the rest of the code to generate
+the report
+
+
+```{r eval=FALSE}
+createReport(sampleData)
+```
+
+This will create the report called: 
+`My_Data_Directory/My_Data_Directory.Simple_RIME_report.xlsx`.
+
+You can optionally provide an alternative name for the report.
+
+
+```{r eval=FALSE}
+createReport(sampleData, 
+             outputFileName = "My_Data_Directory/A_New_RIME_Report.xlsx")
+```
+
+This will create the report called: 
+`My_Data_Directory/My_Data_Directory/A_New_RIME_Report.xlsx`.
+
+## Session Information
+
+```{r info,echo=TRUE}
+sessionInfo()
+```
+
