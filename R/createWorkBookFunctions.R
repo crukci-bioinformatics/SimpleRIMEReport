@@ -68,7 +68,7 @@ addFullTables <- function(wb, protData){
         showGridLines(wb, sheet = sheetNum, showGridLines = TRUE)
         writeData(wb, 
                   sheet = sheetNum + 1, 
-                  x = protein_data[[sheetNum]], 
+                  x = protData[[sheetNum]], 
                   headerStyle = headStyle)
         setColWidths(wb, sheet = sheetNum + 1, cols = 1:3, widths = 16)
         setColWidths(wb, sheet = sheetNum + 1, cols = 4, widths = 100)
