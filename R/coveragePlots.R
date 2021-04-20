@@ -30,7 +30,7 @@ createFastaTable <- function(sampleTab){
 #' @import stringr
 covPlot1 <- function(Protein_seq, features, plotTitle){
     # get percent coverage
-    protWidth <- width(Protein_seq)
+    protWidth <- str_length(as.character(Protein_seq))
     coverage <-  map2(features$start, features$end, seq) %>%   
         unlist() %>% 
         unique() %>% 
@@ -108,7 +108,8 @@ covPlot2 <- function(Protein_seq, features){
                           xIndex=xIndex,
                           yIndex=yIndex,
                           highlight=aaHits)
-    yMax <- ceiling(width(Protein_seq) / 100) + 1
+    protWidth <- str_length(as.character(Protein_seq))
+    yMax <- ceiling(protWidth / 100) + 1
     ggplot(plotDat) +
         geom_label(aes(x=xIndex, y=yIndex, fill=highlight, label=Seq), 
                    family = "mono") +

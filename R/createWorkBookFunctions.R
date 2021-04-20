@@ -27,7 +27,8 @@ addPlots <- function(wb, plotsObj){
 
         # detailed coverage map
         print(plotsObj[[plotNum]]$CoverageDetails)
-        figHeight <- ceiling(width(plotsObj[[plotNum]]$ProteinSeq) / 100 ) * 0.6 + 0.2
+        protWidth <- str_length(as.character(plotsObj[[plotNum]]$ProteinSeq))
+        figHeight <- ceiling(protWidth / 100 ) * 0.6 + 0.2
         insertPlot(wb,
                    sheet = 1,
                    width = 22,
