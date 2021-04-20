@@ -1,8 +1,8 @@
 #' Add worksheet with plots
-#' 
-#' This function adds the coverage plots to a new worksheet in the workbook. The 
-#' summary coverage map is always the same height, but the plot height for the 
-#' detailed coverage map needs to be calculated from the amino acid sequence 
+#'
+#' This function adds the coverage plots to a new worksheet in the workbook. The
+#' summary coverage map is always the same height, but the plot height for the
+#' detailed coverage map needs to be calculated from the amino acid sequence
 #' length for the bait protein.
 #' @name addPlots
 #' @import openxlsx
@@ -13,30 +13,30 @@ addPlots <- function(wb, plotsObj){
     for(plotNum in seq_along(plotsObj)){
         # summary coverage map
         print(plotsObj[[plotNum]]$CoverageMap)
-        insertPlot(wb, 
-                   sheet = 1, 
-                   width = 22, 
-                   height = 2, 
-                   xy = NULL, 
+        insertPlot(wb,
+                   sheet = 1,
+                   width = 22,
+                   height = 2,
+                   xy = NULL,
                    startRow = rowNum,
-                   startCol = 1, 
-                   fileType = "png", 
-                   units = "in", 
+                   startCol = 1,
+                   fileType = "png",
+                   units = "in",
                    dpi = 300)
         rowNum <- rowNum + 10
-        
+
         # detailed coverage map
         print(plotsObj[[plotNum]]$CoverageDetails)
         figHeight <- ceiling(width(plotsObj[[plotNum]]$ProteinSeq) / 100 ) * 0.6 + 0.2
-        insertPlot(wb, 
-                   sheet = 1, 
-                   width = 22, 
-                   height = figHeight, 
-                   xy = NULL, 
+        insertPlot(wb,
+                   sheet = 1,
+                   width = 22,
+                   height = figHeight,
+                   xy = NULL,
                    startRow = rowNum,
-                   startCol = 1, 
-                   fileType = "png", 
-                   units = "in", 
+                   startCol = 1,
+                   fileType = "png",
+                   units = "in",
                    dpi = 299)
         rowNum <- rowNum + (figHeight * 5)
     }
