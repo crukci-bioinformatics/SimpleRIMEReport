@@ -17,14 +17,19 @@ createFastaTable <- function(sampleTab){
         select(BaitProteinUniProtID, ProteinSeq)
 }
 
-## match sequence with protein sequence and return co-ordinates
-getPosition <- function(peptideSeq, ProteinSeq) {
-    vmatchPattern(peptideSeq, ProteinSeq) %>%
-        as.data.frame() %>%
-        dplyr::select(start, end) %>%
-        return()
-}
-
+#' Make summary coverage plot
+#' 
+#' This function returns takes the proteins amino acid sequence and the list of
+#' overlapped amino acids (features) and generates a summary plot showing 
+#' the overall coverage across the length of the protein.
+#' @name makeCoveragePlots
+#' @import dplyr
+#' @import GenomicRanges
+#' @import ggplot2
+#' @importFrom IRanges IRanges
+#' @importFrom magrittr %>%
+#' @import purrr
+#' @import stringr
 covPlot1 <- function(Protein_seq, features, plotTitle){
     # get percent coverage
     protWidth <- width(Protein_seq)
@@ -33,7 +38,7 @@ covPlot1 <- function(Protein_seq, features, plotTitle){
         width() %>%
         sum()
     Perct <- round(coverage / protWidth * 100, 2)
-    SubTitle <- paste0("Number of Unique Peptides: ", 
+    SubTitle <- str_c("Number of Unique Peptides: ", 
                        nrow(features), 
                        "\n% Coverage: ", 
                        Perct)
@@ -73,6 +78,18 @@ covPlot1 <- function(Protein_seq, features, plotTitle){
                            expand = c(0, 0))
 }
 
+#' Make detailed coverage plot
+#' 
+#' This function returns takes the proteins amino acid sequence and the list of
+#' overlapped amino acids (features) and generates a detailed plot showing 
+#' exactly which AAs are overlapped by peptides detected in the sample.
+#' @name makeCoveragePlots
+#' @import dplyr
+#' @importFrom cowplot theme_nothing
+#' @import ggplot2
+#' @importFrom magrittr %>%
+#' @import purrr
+#' @import stringr
 covPlot2 <- function(Protein_seq, features){
     aaSeq <- str_split(as.character(Protein_seq), "")[[1]]
     len <- length(aaSeq)
@@ -101,14 +118,36 @@ covPlot2 <- function(Protein_seq, features){
         scale_fill_manual(values=c("#EEEDD6", "#A4F488")) +
         scale_y_reverse() +
         coord_cartesian(xlim = c(0.6, 109.4)) +
-        #coord_cartesian(xlim = c(0.6, 109.4), ylim = c(0, yMax)) +
         theme_nothing() 
 }
 
-# Coverage plot
-coveragePlot <- function(SampleName, BaitProteinName, BaitProteinUniProtID, 
-                         PeptideData, ProteinSeq, species_id) {
-    message("Generate plots for ", SampleName)
+#' Create a feature table
+#' 
+#' Creates a table showing ranges of amino acids in the protein sequence that
+#' are overlapped by the peptides detected in the sample
+#' @name createFastaTable
+#' @importFrom Biostrings vmatchPattern
+#' @import dplyr
+#' @importFrom magrittr %>%
+getPosition <- function(peptideSeq, ProteinSeq) {
+    vmatchPattern(peptideSeq, ProteinSeq) %>%
+        as.data.frame() %>%
+        select(start, end)
+}
+
+#' Make coverage plots for a single sample
+#'
+#' This function takes the bait protein sequences and peptide sequence data and
+#' generates a table detailing which amino acids are overlaped by peptides
+#' detected in the sample. It returns a list containing the summary coverage
+#' map, the detailed coverage plot and the sequence for the bait protein.
+#' @name coveragePlots
+#' @import dplyr
+#' @importFrom magrittr %>%
+#' @import purrr
+#' @import stringr
+coveragePlots <- function(SampleName, BaitProteinName, BaitProteinUniProtID, 
+                         PeptideData, ProteinSeq, ...) {
 
     features <- PeptideData %>%
         filter(`Master Protein Accessions` == BaitProteinUniProtID) %>%
@@ -125,13 +164,21 @@ coveragePlot <- function(SampleName, BaitProteinName, BaitProteinUniProtID,
          ProteinSeq=ProteinSeq)
 }
 
-# make Plots
+#' Make coverage plots for each sample
+#' 
+#' This function retrieves the amino acid sequence for each bait protein, and 
+#' then uses the information in the peptide tables to create two coverage plots
+#' for each bait protein. The first shows the summary of the coverage as a bar,
+#' the second shows the details of which amino acid sequences are covered by 
+#' peptides detected.
+#' @name makeCoveragePlots
+#' @import dplyr
+#' @import purrr
+#' @importFrom magrittr %>%
 makeCoveragePlots <- function(sampleTab, peptideDat){
-    fastaTab <- createFastaTable(sampleTable)
-    sampleTab %>%   
+    fastaTab <- createFastaTable(sampleTab)
+    ewe <- sampleTab %>%   
         mutate(PeptideData=peptideDat) %>% 
         inner_join(fastaTab) %>% 
-        select(SampleName, BaitProteinName, 
-               BaitProteinUniProtID, PeptideData, ProteinSeq) %>% 
-        pmap(coveragePlot, species_id = species_id)
+        pmap(coveragePlots)
 }
