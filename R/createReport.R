@@ -31,8 +31,7 @@ createReport <- function(sampleTable, dataDir){
              "detected.")
     }
 
-    # Get fasta seq from SwissProt file
-    fastaSeqTable <- createFastaTable(sampleTable)
+
 
     # load data
     protein_data <- getProteinTables(sampleTable)
