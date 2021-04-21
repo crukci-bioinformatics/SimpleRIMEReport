@@ -1,2 +1,0 @@
-In this experiment the pull downs were for NUP98 fusions, so the bait proteins required custom FASTA. Eva has provided me with the fasta for the NUP98-HOXA9 fusion. 
-I also need to be able to test the process for retrieving the AA sequence from SwissProt for standard proteins, so I have created a PTBP1 sample. The PTBP1 sample is data from the original experiment, the actual bait was NUP98-KDM5A.
