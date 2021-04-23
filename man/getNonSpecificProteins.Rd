@@ -10,7 +10,7 @@ addSampleName(tab, sampleName)
 getNonSpecificProteins(sampleTab)
 }
 \description{
-Add the sample name to all column headers except "Accessions"
+Add the sample name to all column headers except "Accession"
 
 Read all protein tables for negative controls and compile a vector of 
 the proteins detected. These will be considered as present due to 

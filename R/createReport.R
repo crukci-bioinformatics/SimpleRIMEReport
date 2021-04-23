@@ -18,7 +18,10 @@
 # @import openxlsx
 # @import cowplot
 
-createReport <- function(sampleTable, dataDir, outputFileName=NULL){
+createReport <- function(sampleTable, 
+                         dataDir, 
+                         additionalFasta = NULL,
+                         outputFileName = NULL){
     
     sampleTable <- sampleTable %>% 
         mutate(across(ends_with("File"), ~str_c(dataDir, "/", .x)))
@@ -31,16 +34,22 @@ createReport <- function(sampleTable, dataDir, outputFileName=NULL){
              "detected.")
     }
 
+    # Load  any additional fasta files and add to the annotation
+    if(!is.null(additionalFasta)){ 
+        annotTab <- loadCustomFasta(additionalFasta) 
+    }else{
+        annotTab <- annot
+        }
     # load data
-    protein_data <- getProteinTables(sampleTable)
+    protein_data <- getProteinTables(sampleTable, annotTab)
     peptide_data <- getPeptideTables(sampleTable)
 
     # make merged tables
-    combined_data <- combineProteinTables(sampleTable)
-    filtered_data <- filterCombinedTable(sampleTable)
+    combined_data <- combineProteinTables(sampleTable, annotTab)
+    filtered_data <- filterCombinedTable(sampleTable, annotTab)
 
     # make plots
-    coveragePlots <- makeCoveragePlots(sampleTable, peptide_data)
+    coveragePlots <- makeCoveragePlots(sampleTable, peptide_data, annotTab)
 
     # make workbook
     if(is.null(outputFileName)){

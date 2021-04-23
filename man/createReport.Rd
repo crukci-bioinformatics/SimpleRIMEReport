@@ -4,7 +4,12 @@
 \alias{createReport}
 \title{Create the Simple RIME report}
 \usage{
-createReport(sampleTable, dataDir, outputFileName = NULL)
+createReport(
+  sampleTable,
+  dataDir,
+  additionalFasta = NULL,
+  outputFileName = NULL
+)
 }
 \arguments{
 \item{sampleTable}{data.frame; the sample table}

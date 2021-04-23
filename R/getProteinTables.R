@@ -6,9 +6,9 @@
 #' @import dplyr
 #' @import readr
 #' @import purrr
-getProteinTables <- function(sampleTab){
+getProteinTables <- function(sampleTab, annotTab){
     loadProteinData(sampleTab) %>%   
-        map(left_join, annot, by=c("Accession"="Accession")) %>% 
+        map(left_join, annotTab, by=c("Accession"="Accession")) %>% 
         map(select, Accession, Gene, `Gene Symbol`=GeneSymbol, 
             Description, everything(), -Sequence)
 }

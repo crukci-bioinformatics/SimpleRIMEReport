@@ -7,12 +7,12 @@
 #' @import purrr
 #' @import readr
 #' @importFrom Biostrings AAStringSet
-createFastaTable <- function(sampleTab){
+createFastaTable <- function(sampleTab, annotTab){
     sampleTab %>% 
         select(BaitProteinUniProtID) %>% 
         distinct() %>% 
         filter(!is.na(BaitProteinUniProtID)) %>% 
-        left_join(annot, by=c("BaitProteinUniProtID"="Accession")) %>% 
+        left_join(annotTab, by=c("BaitProteinUniProtID"="Accession")) %>% 
         mutate(ProteinSeq = map(Sequence, AAStringSet)) %>% 
         select(BaitProteinUniProtID, ProteinSeq)
 }
@@ -174,8 +174,8 @@ coveragePlots <- function(SampleName, BaitProteinName, BaitProteinUniProtID,
 #' @import dplyr
 #' @import purrr
 #' @importFrom magrittr %>%
-makeCoveragePlots <- function(sampleTab, peptideDat){
-    fastaTab <- createFastaTable(sampleTab)
+makeCoveragePlots <- function(sampleTab, peptideDat, annotTab){
+    fastaTab <- createFastaTable(sampleTab, annotTab)
     sampleTab %>%   
         mutate(PeptideData=peptideDat) %>% 
         inner_join(fastaTab, by="BaitProteinUniProtID") %>% 

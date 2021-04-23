@@ -15,11 +15,11 @@ addSampleName <- function(tab, sampleName){
 #' @name combineProteinTables
 #' @import dplyr
 #' @import purrr
-combineProteinTables <- function(sampleTab){
+combineProteinTables <- function(sampleTab, annotTab){
     loadProteinData(sampleTab) %>%   
         map2(sampleTable$SampleName, addSampleName) %>% 
         reduce(full_join, by="Accession") %>% 
-        left_join(annot, by=c("Accession"="Accession")) %>% 
+        left_join(annotTab, by=c("Accession"="Accession")) %>% 
         select(Accession, Gene, 
                `Gene Symbol`=GeneSymbol, Description, 
                everything(), -Sequence)
@@ -54,17 +54,17 @@ getNonSpecificProteins <- function(sampleTab){
 #' @import dplyr
 #' @import stringr
 #' @import purrr
-filterCombinedTable <- function(sampleTab){
+filterCombinedTable <- function(sampleTab, annotTab){
     non_specific <- getNonSpecificProteins(sampleTab)
     
     negCtrls <- c("igg", "control", "empty")
     sampleTab <- sampleTab %>% 
         filter(!str_to_lower(BaitProteinName)%in%negCtrls)
     
-    loadProteinData(sampleTab) %>%   
+    loadProteinData(sampleTab, annotTab) %>%   
         map2(sampleTab$SampleName, addSampleName) %>% 
         reduce(full_join, by="Accession") %>% 
-        left_join(annot, by=c("Accession"="Accession")) %>% 
+        left_join(annotTab, by=c("Accession"="Accession")) %>% 
         select(Accession, Gene, 
                `Gene Symbol`=GeneSymbol, Description, 
                everything(), -Sequence) %>% 
