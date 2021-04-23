@@ -11,8 +11,21 @@ Description: The package takes the protein and peptide outputs from Proteome
     control (e.g. IgG) is required in order to filter out non-specific
     binding.
 License: GPL-2
+Imports: Biostrings, 
+         cowplot,
+         dplyr (>= 1.0.0),
+         ggplot2, 
+         magrittr,
+         openxlsx,
+         purrr, 
+         readr,
+         stringr, 
+         tibble,
+         tidyr 
+Depends: R (>= 4.0)
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.1.1
-Depends: 
-    R (>= 2.10)
