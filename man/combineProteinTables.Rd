@@ -4,7 +4,7 @@
 \alias{combineProteinTables}
 \title{Combine all protein data into a single table}
 \usage{
-combineProteinTables(sampleTab)
+combineProteinTables(sampleTab, annotTab)
 }
 \description{
 Read all the protein data tables, combine them into a single table - add the

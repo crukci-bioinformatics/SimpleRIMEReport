@@ -4,7 +4,7 @@
 \alias{getProteinTables}
 \title{Get protein tables}
 \usage{
-getProteinTables(sampleTab)
+getProteinTables(sampleTab, annotTab)
 }
 \description{
 This function reads each Protein data file and creates list of protein level 

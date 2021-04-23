@@ -10,7 +10,7 @@ covPlot1(Protein_seq, features, plotTitle)
 
 covPlot2(Protein_seq, features)
 
-makeCoveragePlots(sampleTab, peptideDat)
+makeCoveragePlots(sampleTab, peptideDat, annotTab)
 }
 \description{
 This function returns takes the proteins amino acid sequence and the list of

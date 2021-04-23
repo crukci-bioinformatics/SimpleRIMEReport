@@ -5,7 +5,7 @@
 \alias{getPosition}
 \title{Create fasta table}
 \usage{
-createFastaTable(sampleTab)
+createFastaTable(sampleTab, annotTab)
 
 getPosition(peptideSeq, ProteinSeq)
 }

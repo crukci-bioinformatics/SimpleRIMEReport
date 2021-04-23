@@ -4,7 +4,7 @@
 \alias{filterCombinedTable}
 \title{Create filtered protein table}
 \usage{
-filterCombinedTable(sampleTab)
+filterCombinedTable(sampleTab, annotTab)
 }
 \description{
 Read all the protein data tables for the baited samples, combine them into a
