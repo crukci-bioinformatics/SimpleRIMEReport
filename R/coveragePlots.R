@@ -69,8 +69,8 @@ covPlot1 <- function(Protein_seq, features, plotTitle){
             plot.title = element_text(hjust = 0.5)
         ) +
         scale_x_continuous(limits = c(0, protWidth), 
-                           breaks = brkTicks) +
-                           #expand = c(0,0)) +
+                           breaks = brkTicks,
+                           expand = c(0,0)) +
         scale_y_continuous(limits = c(0, 10), 
                            breaks = c(0, 10), 
                            expand = c(0, 0))
