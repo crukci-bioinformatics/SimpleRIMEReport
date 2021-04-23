@@ -6,6 +6,9 @@
 #' @param sampleTable data.frame; the sample table
 #' @param dataDir character; Path to directory containing the Proteome
 #'   Discoverer output files
+#' @param additionalFasta character; a vector of paths to custom fasta files to
+#'   be included in the annotation (optional)
+#' @param outputFileName charcter; an output file name (optional)
 #' @return NULL
 #' @examples
 #'

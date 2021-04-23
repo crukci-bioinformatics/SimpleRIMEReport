@@ -16,6 +16,11 @@ createReport(
 
 \item{dataDir}{character; Path to directory containing the Proteome
 Discoverer output files}
+
+\item{additionalFasta}{character; a vector of paths to custom fasta files to
+be included in the annotation (optional)}
+
+\item{outputFileName}{charcter; an output file name (optional)}
 }
 \description{
 This function generates report as an Excel workbook. The input is a sample
