@@ -60,18 +60,18 @@ BaitProteinName from the the protein file name.
 
 The assumed structure of the protein file name is:  
 
-QE\_HF\_\<Date\>\_\<PR_number\>\_\<Initials\>\_\<SampleName\>\_\<BaitProteinName\>\_proteingroups.txt
+`QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_proteingroups.txt`
 
 The SampleName can include "_" e.g.:  
 
-  QE_HF_04092018_PR1025_SAN_Sample1_VEH_ARID2_proteingroups.txt
+`QE_HF_04092018_PR1025_SAN_Sample1_VEH_ARID2_proteingroups.txt`
 
 gives:
 
   SampleName: "Sample1_VEH"  
   BaitProteinName: "ARID2"  
 
-You'll need to check the sample sheet and modify as necessary before
+You'll need to check the sample table and modify as necessary before
 proceeding. The sample table can either be modified directly in R, or you can
 open the saved version in a spreadsheet (e.g. Excel) and edit it and the load it
 back into R.
@@ -112,6 +112,39 @@ createReport(sampleData, outputFileName = "RIME_reports/A_New_RIME_Report.xlsx")
 This would create the report called `A_New_RIME_Report.xlsx` in the directory 
 `RIME_reports`. Note that the directory "RIME_reports" would not be created
 by the function, it would have to already exist.
+
+## Custom FASTA files
+
+If custom FASTA files (non-UniProt) have been used in the Protein Discoverer 
+analysis, these should also be provided to the `createReport` function so that
+the proteins can be correctly annotated and so that the amino acid sequence is 
+available for the plot.
+
+```{r eval=FALSE}
+createReport(sampleData, additionalFasta = "My_Data_Directory/My_Protein.fasta")
+```
+
+You can provide more than one fasta:
+
+
+```{r eval=FALSE}
+myFastaFiles <- c("My_Data_Directory/My_Protein1.fasta", 
+                  "My_Data_Directory/My_Protein2.fasta",
+                  "My_Data_Directory/My_Protein3.fasta")
+createReport(sampleData, additionalFasta = myFastaFiles)
+```
+
+The Accession, Gene ID and description for the annotation will be extracted 
+from the header for each sequence; the expected format is:  
+
+`>sp|<Accession>|<GeneID> <Description>`
+    
+e.g.:
+
+`>sp|NUP98-HOXA9|NUP98-HOXA9_HUMAN OS=Homo sapiens`
+
+where the Accession is `NUP98-HOXA9` and the Gene ID is `NUP98-HOXA9_HUMAN`. Any
+further information is add to the Description.
 
 ## Session Information
 
