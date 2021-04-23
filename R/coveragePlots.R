@@ -12,7 +12,7 @@ createFastaTable <- function(sampleTab){
         select(BaitProteinUniProtID) %>% 
         distinct() %>% 
         filter(!is.na(BaitProteinUniProtID)) %>% 
-        left_join(annot, by=c("BaitProteinUniProtID"="Accessions")) %>% 
+        left_join(annot, by=c("BaitProteinUniProtID"="Accession")) %>% 
         mutate(ProteinSeq = map(Sequence, AAStringSet)) %>% 
         select(BaitProteinUniProtID, ProteinSeq)
 }

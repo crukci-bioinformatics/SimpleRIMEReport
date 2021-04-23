@@ -33,7 +33,7 @@ annot <- spTab %>%
     summarise(Value=str_c(Value, collapse = " ")) %>%  
     ungroup() %>% 
     pivot_wider(names_from = Code, values_from = Value) %>%  
-    select(Accessions=AC, 
+    select(Accession=AC, 
            Gene, 
            Description=DE, 
            GeneSymbol=GN, 
@@ -41,8 +41,8 @@ annot <- spTab %>%
            Species=OS) %>%  
     filter(str_detect(Species, keepSpecies)) %>% 
     select(-Species) %>% 
-    mutate(Accessions=str_remove(Accessions, "; *$")) %>% 
-    separate_rows(Accessions, sep="; ") %>%  
+    mutate(Accession=str_remove(Accession, "; *$")) %>% 
+    separate_rows(Accession, sep="; ") %>%  
     mutate(GeneSymbol=str_remove_all(GeneSymbol, "^[[:alpha:]]+=|;.*")) %>%  
     mutate(Description=str_remove_all(Description, "RecName: |;$")) %>%  
     mutate(Description=str_remove_all(Description, "^Full=|;.*$")) %>%  

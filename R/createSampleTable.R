@@ -68,9 +68,9 @@ createSampleTable <- function(dataDir){
     tab <- list.files(dataDir, pattern = "_Proteins.txt$") %>%
         map_df(filenametotable)
     uid <- filter(annot, GeneSymbol%in%tab$BaitProteinName) %>% 
-        select(BaitProteinName = GeneSymbol, Accessions) %>% 
+        select(BaitProteinName = GeneSymbol, Accession) %>% 
         group_by(BaitProteinName) %>% 
-        summarise(BaitProteinUniProtID = str_c(Accessions, collapse="/")) %>% 
+        summarise(BaitProteinUniProtID = str_c(Accession, collapse="/")) %>% 
         ungroup()
     tab <- left_join(tab, uid, by="BaitProteinName")
     outnam <- str_c(dataDir, "/", basename(dataDir), "_sample_details.csv")

@@ -8,7 +8,7 @@
 #' @import purrr
 getProteinTables <- function(sampleTab){
     loadProteinData(sampleTab) %>%   
-        map(left_join, annot, by=c("Accession"="Accessions")) %>% 
+        map(left_join, annot, by=c("Accession"="Accession")) %>% 
         map(select, Accession, Gene, `Gene Symbol`=GeneSymbol, 
             Description, everything(), -Sequence)
 }

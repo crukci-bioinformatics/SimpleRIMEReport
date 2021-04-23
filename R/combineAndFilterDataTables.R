@@ -1,6 +1,6 @@
 #' Add sample name to column header
 #' 
-#' Add the sample name to all column headers except "Accessions"
+#' Add the sample name to all column headers except "Accession"
 #' @name getNonSpecificProteins
 #' @import dplyr
 #' @import stringr
@@ -19,7 +19,7 @@ combineProteinTables <- function(sampleTab){
     loadProteinData(sampleTab) %>%   
         map2(sampleTable$SampleName, addSampleName) %>% 
         reduce(full_join, by="Accession") %>% 
-        left_join(annot, by=c("Accession"="Accessions")) %>% 
+        left_join(annot, by=c("Accession"="Accession")) %>% 
         select(Accession, Gene, 
                `Gene Symbol`=GeneSymbol, Description, 
                everything(), -Sequence)
@@ -64,7 +64,7 @@ filterCombinedTable <- function(sampleTab){
     loadProteinData(sampleTab) %>%   
         map2(sampleTab$SampleName, addSampleName) %>% 
         reduce(full_join, by="Accession") %>% 
-        left_join(annot, by=c("Accession"="Accessions")) %>% 
+        left_join(annot, by=c("Accession"="Accession")) %>% 
         select(Accession, Gene, 
                `Gene Symbol`=GeneSymbol, Description, 
                everything(), -Sequence) %>% 
