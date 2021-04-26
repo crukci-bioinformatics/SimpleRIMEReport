@@ -17,11 +17,12 @@ A sample table suitable for input into the `createReport` function. A
 }
 \description{
 This function scans the contents of a directory for the presence of Proteome
-Discoverer results files. The files required for each sample are a Protein
-table and a Peptide table. The filenames are expected to have the following
-naming convention:
+Discoverer results files.
 }
 \details{
+The files required for each sample are a Protein table and a Peptide table.
+The filenames are expected to have the following naming convention:
+
 QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_Proteins.txt
 QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_PeptideGroups.txt
 
@@ -29,18 +30,23 @@ The function creates a new file, in the sample directory, that contains a
 sample table, which is used to generate the report. 
 
 The sample table will contain 5 columns:
-ProteinFile - the file name for 'protiengroups' data
-PeptideFile - the file name for 'psms' data
-SampleName - the name for the sample - this is used for the plot titles and
-             the names of the worksheets
-BaitProteinName - the protein name for the bait protein, e.g. ER, FOXA1 etc. 
-                  This is only used in the plot titles, it could be anything
-BaitProteinUniProtID - the UniProt ID for the bait protein, e.g. P03372, P55317
-                      this is used to look up the fasta sequence
+\itemize{
+ \item{ ProteinFile - the file name for 'protiengroups' data }
+ \item{ PeptideFile - the file name for 'psms' data }
+ \item{ SampleName - the name for the sample - this is used for the plot
+                     titles and the names of the worksheets }
+ \item{ BaitProteinName - the protein name for the bait protein, e.g. ER,
+                          FOXA1 etc. This is only used in the plot titles,
+                          it could be anything }
+ \item{ BaitProteinUniProtID - the UniProt ID for the bait protein, e.g.
+                               P03372, P55317 this is used to look up the
+                               fasta sequence }
+}
 
 The script will attempt to deduce the SampleName and BaitProteinName from the
 the file name. It will also try to determine the UniProt ID from the bait
-protein name.
+protein name. If the BaitProteinName is associated with multiple UniProt IDs,
+the script will return all possibilities.
 
 It is important to check the details contained in the table, and modify it if
 necessary, prior to generating the report. In particular check the bait
@@ -48,6 +54,5 @@ protein name and UniProt ID. The negative control should be called "Control",
 "Empty" or "IgG" and have no UniProtID.
 }
 \examples{
-
 
 }
