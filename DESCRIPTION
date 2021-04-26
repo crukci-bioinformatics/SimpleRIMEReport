@@ -28,5 +28,6 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 biocViews: Proteomics
+BugReports: https://github.com/crukci-bioinformatics/SimpleRIMEReport/issues
 Encoding: UTF-8
 RoxygenNote: 7.1.1
