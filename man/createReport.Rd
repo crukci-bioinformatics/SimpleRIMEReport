@@ -26,6 +26,21 @@ be included in the annotation (optional)}
 This function generates report as an Excel workbook. The input is a sample
 table.
 }
+\details{
+The sample table should contain 5 columns:  
+\itemize{
+ \item{ ProteinFile - the file name for 'protiengroups' data }
+ \item{ PeptideFile - the file name for 'psms' data }
+ \item{ SampleName - the name for the sample - this is used for the plot
+                     titles and the names of the worksheets }
+ \item{ BaitProteinName - the protein name for the bait protein, e.g. ER,
+                          FOXA1 etc. This is only used in the plot titles,
+                          it could be anything }
+ \item{ BaitProteinUniProtID - the UniProt ID for the bait protein, e.g.
+                               P03372, P55317 this is used to look up the
+                               fasta sequence }
+}
+}
 \examples{
 
 }
