@@ -10,9 +10,9 @@ filenametotable <- function(fileName){
     dat <- str_split(fileName, "_")[[1]]
     len <- length(dat)
     tibble(ProteinFile=fileName,
-           PeptideFile=str_replace(ProteinFile, 
-                                   "_Proteins.txt", 
-                                   "_PeptideGroups.txt"), 
+           PeptideFile=str_replace_all(ProteinFile, 
+                                       c(Proteins.txt = "PeptideGroups.txt", 
+                                         proteingroups.txt = "psms.txt")),
            SampleName=str_c(dat[6:(len-2)], collapse="_"),
            BaitProteinName=dat[len-1])
 }
@@ -20,12 +20,18 @@ filenametotable <- function(fileName){
 #' Create the sample table based on files in the data directory
 #'
 #' This function scans the contents of a directory for the presence of Proteome
-#' Discoverer results files. 
+#' Discoverer results files. It will detect both PD version 1.4 and PD version 
+#' 2.4 files. 
 #'
 #' @param dataDir character; Path to directory containing the Proteome
 #'   Discoverer output files
 #' @details The files required for each sample are a Protein table and a Peptide table.
-#' The filenames are expected to have the following naming convention:
+#' For PD version 1.4 filenames are expected to have the following naming convention:
+#'
+#' QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_proteingroups.txt
+#' QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_psms.txt
+#' 
+#' For PD version 2.4 filenames are expected to have the following naming convention:
 #'
 #' QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_Proteins.txt
 #' QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_PeptideGroups.txt
@@ -35,7 +41,7 @@ filenametotable <- function(fileName){
 #' 
 #' The sample table will contain 5 columns:
 ##' \itemize{
-##'  \item{ ProteinFile - the file name for 'protiengroups' data }
+##'  \item{ ProteinFile - the file name for 'protein groups' data }
 ##'  \item{ PeptideFile - the file name for 'psms' data }
 ##'  \item{ SampleName - the name for the sample - this is used for the plot
 ##'                      titles and the names of the worksheets }
@@ -73,9 +79,10 @@ createSampleTable <- function(dataDir){
     if(!dir.exists(dataDir)) { 
         stop("The data directory provided - ", dataDir, " - cannot be found")
         }
-    protFiles <- list.files(dataDir, pattern = "_Proteins.txt$")
+    protFiles <- list.files(dataDir, pattern = "_Proteins.txt$|_proteingroups.txt$")
     if(length(protFiles)==0){
-        stop("No '_Protein.txt' files were found in ", dataDir)
+        stop("No '_Protein.txt' or '_proteingroups.txt' files were found in ",
+             dataDir)
     }
     tab <- map_df(protFiles, filenametotable)
     uid <- filter(annot, GeneSymbol%in%tab$BaitProteinName) %>% 
