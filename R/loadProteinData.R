@@ -6,7 +6,7 @@
 selectColumns <- function(x){
     dplyr::select(x, 
                   Accession,
-                  Coverage = `Coverage [%]`,
+                  Coverage = contains("Coverage"),
                   `Unique Peptides`=`# Unique Peptides`)
 }
 
