@@ -7,5 +7,9 @@
 #' @import purrr
 getPeptideTables <- function(sampleTab){
     map(sampleTab$PeptideFile, read_tsv, col_types = cols()) %>% 
+        map(~rename_with(.x, 
+                         str_replace,
+                         pattern = ".*Accessions$",
+                         replacement = "Accessions")) %>%
         set_names(sampleTab$SampleName)
 }

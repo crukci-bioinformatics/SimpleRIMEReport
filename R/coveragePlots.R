@@ -148,8 +148,8 @@ getPosition <- function(peptideSeq, ProteinSeq) {
 coveragePlots <- function(SampleName, BaitProteinName, BaitProteinUniProtID, 
                          PeptideData, ProteinSeq, ...) {
 
+        filter(Accessions == BaitProteinUniProtID) %>%
     features <- PeptideData %>%
-        filter(`Master Protein Accessions` == BaitProteinUniProtID) %>%
         pull(Sequence) %>%
         toupper() %>%
         unique() %>%
