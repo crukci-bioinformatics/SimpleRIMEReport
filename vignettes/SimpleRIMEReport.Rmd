@@ -36,7 +36,7 @@ the same Gene Symbol will be associated with multiple UniProt IDs and you should
 select the correct one. Furthermore, if a custom database has been used, then 
 the package will not able to identify the accession ID for the protein.
 
-# 1. Generate sample table
+## 1. Generate sample table
 
 The function `createSampleTable` requires the directory that contains the PD
 outputs. It uses the file names to generate a sample table.
@@ -46,7 +46,7 @@ The sample table will be  saved in the data directory as
 
 The sample table will contain 5 columns:  
 
-* ProteinFile - the file name for 'protiengroups' data  
+* ProteinFile - the file name for 'protein groups' data  
 * PeptideFile - the file name for 'psms' data  
 * SampleName - the name for the sample - this is used for the plot titles and
              the names of the worksheets  
@@ -91,7 +91,7 @@ library(readr)
 sampleData <- read_csv("My_Data_Directory/My_Data_Directory_sample_details.csv")
 ```
 
-# 3. Generate the report
+## 2. Generate the report
 
 Once you have adjusted the sample table you can use the function `createReport`
 to generate the report.
@@ -113,7 +113,7 @@ This would create the report called `A_New_RIME_Report.xlsx` in the directory
 `RIME_reports`. Note that the directory "RIME_reports" would not be created
 by the function, it would have to already exist.
 
-## Custom FASTA files
+### Custom FASTA files
 
 If custom FASTA files (non-UniProt) have been used in the Protein Discoverer 
 analysis, these should also be provided to the `createReport` function so that
