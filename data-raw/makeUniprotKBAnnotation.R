@@ -3,7 +3,7 @@ library(tidyverse)
 # The purpose of the script is to create an annotation object from UniProt. 
 # This object is saved as an internal data source and is used by the package
 # annotate the data set. This save having to use Uniprot.ws, which can be 
-# quite slow. It unforunatley does create a very large data object.
+# quite slow. It unforunately does create a very large data object.
 # First you need to download SwissProt from:
 #
 # ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz
@@ -43,7 +43,7 @@ annot <- spTab %>%
     select(-Species) %>% 
     mutate(Accession=str_remove(Accession, "; *$")) %>% 
     separate_rows(Accession, sep="; ") %>%  
-    mutate(GeneSymbol=str_remove_all(GeneSymbol, "^[[:alpha:]]+=|;.*")) %>%  
+    mutate(GeneSymbol=str_remove_all(GeneSymbol, "^[[:alpha:]]+=|;.*| \\{ECO.*")) %>%  
     mutate(Description=str_remove_all(Description, "RecName: |;$")) %>%  
     mutate(Description=str_remove_all(Description, "^Full=|;.*$")) %>%  
     mutate(Sequence=str_remove_all(Sequence, " "))
