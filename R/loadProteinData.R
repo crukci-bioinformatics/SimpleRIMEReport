@@ -20,7 +20,7 @@ selectColumns <- function(x){
 #' @import dplyr
 #' @import readr
 #' @importFrom magrittr %>%
-loadProteinData <- function(sampleTab, dataDir){
+loadProteinData <- function(sampleTab){
     sampleTab$ProteinFile %>% 
         map(read_tsv, col_types = cols()) %>% 
         map(selectColumns) %>% 

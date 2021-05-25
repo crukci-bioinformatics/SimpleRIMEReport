@@ -61,7 +61,7 @@ filterCombinedTable <- function(sampleTab, annotTab){
     sampleTab <- sampleTab %>% 
         filter(!str_to_lower(BaitProteinName)%in%negCtrls)
     
-    loadProteinData(sampleTab, annotTab) %>%   
+    loadProteinData(sampleTab) %>%
         map2(sampleTab$SampleName, addSampleName) %>% 
         reduce(full_join, by="Accession") %>% 
         left_join(annotTab, by=c("Accession"="Accession")) %>% 
