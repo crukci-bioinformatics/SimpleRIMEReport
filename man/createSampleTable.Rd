@@ -17,11 +17,17 @@ A sample table suitable for input into the `createReport` function. A
 }
 \description{
 This function scans the contents of a directory for the presence of Proteome
-Discoverer results files.
+Discoverer results files. It will detect both PD version 1.4 and PD version 
+2.4 files.
 }
 \details{
 The files required for each sample are a Protein table and a Peptide table.
-The filenames are expected to have the following naming convention:
+For PD version 1.4 filenames are expected to have the following naming convention:
+
+QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_proteingroups.txt
+QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_psms.txt
+
+For PD version 2.4 filenames are expected to have the following naming convention:
 
 QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_Proteins.txt
 QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_PeptideGroups.txt
@@ -31,7 +37,7 @@ sample table, which is used to generate the report.
 
 The sample table will contain 5 columns:
 \itemize{
- \item{ ProteinFile - the file name for 'protiengroups' data }
+ \item{ ProteinFile - the file name for 'protein groups' data }
  \item{ PeptideFile - the file name for 'psms' data }
  \item{ SampleName - the name for the sample - this is used for the plot
                      titles and the names of the worksheets }

@@ -4,7 +4,7 @@
 \alias{loadProteinData}
 \title{Load protein data table}
 \usage{
-loadProteinData(sampleTab, dataDir)
+loadProteinData(sampleTab)
 }
 \description{
 Load protein data. Each table is read into an element of a list, which is 
