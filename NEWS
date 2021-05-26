@@ -5,6 +5,7 @@ VERSION 1.1.0
  o Fix unnecessary annotation argument in loadProteinTables 
  o If the "Master" column is present in the protein table, then filter to only
    keep proteins marked "IsMasterProtein"
+ o Fix internal annotation to remove " {ECO..." from some gene symbols
 
 VERSION 1.0.0
 ------------------------
