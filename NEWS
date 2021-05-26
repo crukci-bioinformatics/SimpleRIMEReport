@@ -1,0 +1,15 @@
+VERSION 1.1.0
+------------------------
+ o Allow both Proteome Discoverer version 1.4. and version 2.4 outputs as input
+   files
+ o Fix unnecessary annotation argument in loadProteinTables 
+ o If the "Master" column is present in the protein table, then filter to only
+   keep proteins marked "IsMasterProtein"
+
+VERSION 1.0.0
+------------------------
+ o initial version with the following functions implemented:
+
+    + createSampleTable
+    + createReport     
+
