@@ -148,12 +148,12 @@ getPosition <- function(peptideSeq, ProteinSeq) {
 coveragePlots <- function(SampleName, BaitProteinName, BaitProteinUniProtID, 
                          PeptideData, ProteinSeq, ...) {
 
-        filter(Accessions == BaitProteinUniProtID) %>%
-    features <- PeptideData %>%
-        pull(Sequence) %>%
-        toupper() %>%
-        unique() %>%
-        map_dfr(getPosition, ProteinSeq=ProteinSeq)
+   features <- PeptideData %>%
+       filter(Accessions == BaitProteinUniProtID) %>%
+       pull(Sequence) %>%
+       toupper() %>%
+       unique() %>%
+       map_dfr(getPosition, ProteinSeq=ProteinSeq)
     
     title <- str_c(SampleName, ": ", BaitProteinName, " (", BaitProteinUniProtID, ")")
     cvp1 <- covPlot1(ProteinSeq, features, title)
