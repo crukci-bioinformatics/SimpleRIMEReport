@@ -22,6 +22,8 @@
 ##'                                P03372, P55317 this is used to look up the
 ##'                                fasta sequence }
 ##' }
+#' The proteins are filtered on the "Master" column, if present, to only keep
+#' proteins marked "IsMasterProtein".
 #' 
 #' @return NULL
 #' @examples

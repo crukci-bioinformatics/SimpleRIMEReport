@@ -103,6 +103,9 @@ sampleData <- read_csv("My_Data_Directory/My_Data_Directory_sample_details.csv")
 Once you have adjusted the sample table you can use the function `createReport`
 to generate the report.
 
+If the "Master" column is present, the proteins are filtered to only keep
+proteins marked "IsMasterProtein".
+
 ```{r eval=FALSE}
 createReport(sampleData)
 ```
