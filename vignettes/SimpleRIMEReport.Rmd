@@ -56,11 +56,18 @@ The sample table will contain 5 columns:
                       this is used to look up the fasta sequence  
                       
 The function `createSampleTable` will attempt to guess the SampleName and
-BaitProteinName from the the protein file name.
+BaitProteinName from the the protein file name. The function recognises outputs
+from Protein Discoverer version 1.4 and version 2.4.
 
-The assumed structure of the protein file name is:  
+For PD version 1.4 filenames are expected to have the following naming convention:
 
 `QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_proteingroups.txt`
+`QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_psms.txt`
+ 
+For PD version 2.4 filenames are expected to have the following naming convention:
+
+`QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_Proteins.txt`
+`QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_PeptideGroups.txt`
 
 The SampleName can include "_" e.g.:  
 
