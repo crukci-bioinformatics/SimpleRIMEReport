@@ -1,3 +1,7 @@
+VERSION 1.1.1
+------------------------
+ o Fix bug occuring when a sample is dropped due to no bait detection.
+
 VERSION 1.1.0
 ------------------------
  o Allow both Proteome Discoverer version 1.4. and version 2.4 outputs as input

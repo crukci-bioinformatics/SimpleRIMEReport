@@ -1,7 +1,7 @@
 Package: SimpleRIMEReport
 Type: Package
 Title: Create Simple RIME report
-Version: 1.1.0
+Version: 1.1.1
 Author: Ashley Sawle
 Maintainer: Ashley Sawle <Ashley.Sawle@cruk.cam.ac.uk>
 Description: The package takes the protein and peptide outputs from Proteome
