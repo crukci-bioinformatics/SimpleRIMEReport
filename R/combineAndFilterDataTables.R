@@ -17,7 +17,7 @@ addSampleName <- function(tab, sampleName){
 #' @import purrr
 combineProteinTables <- function(sampleTab, annotTab){
     loadProteinData(sampleTab) %>%   
-        map2(sampleTable$SampleName, addSampleName) %>% 
+        map2(sampleTab$SampleName, addSampleName) %>%
         reduce(full_join, by="Accession") %>% 
         left_join(annotTab, by=c("Accession"="Accession")) %>% 
         select(Accession, Gene, 
