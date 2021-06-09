@@ -64,7 +64,7 @@ hs <- function(){
 addFullTables <- function(wb, protData){
     headStyle <- hs()
     for(sheetNum in seq_along(protData)){
-        addWorksheet(wb, sampleTable$SampleName[sheetNum])
+        addWorksheet(wb, names(protData)[sheetNum])
         showGridLines(wb, sheet = sheetNum, showGridLines = TRUE)
         writeData(wb, 
                   sheet = sheetNum + 1, 

@@ -1,5 +1,10 @@
 VERSION 1.1.1
 ------------------------
+ o Fix bug in "addFullTables" occuring when a sample is dropped due to no bait
+   detection.
+
+VERSION 1.1.1
+------------------------
  o Fix bug occuring when a sample is dropped due to no bait detection.
 
 VERSION 1.1.0
