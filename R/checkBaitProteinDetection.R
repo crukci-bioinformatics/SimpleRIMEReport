@@ -1,20 +1,28 @@
 #' Check that the bait protein is present in the samples protein table
 #' 
 #' This function checks that the bait protein Uniprot ID is present in the 
-#' protein tables `Accession` column, or that the sample is a negative control.
+#' protein and peptide tables `Accession` column, or that the sample is a 
+#' negative control.
 #' @name checkProtein
 #' @import stringr
 checkProtein <- function(SampleName, BaitProteinName, BaitProteinUniProtID, 
-                          ProteinDat, ...){
+                          ProteinDat, PeptideDat, ...){
     negCtrls <- c("igg", "control", "empty")
-    isGood <- str_to_lower(BaitProteinName)%in%negCtrls |
+    isGoodprot <- str_to_lower(BaitProteinName)%in%negCtrls |
                 BaitProteinUniProtID%in%ProteinDat$Accession
-    if(!isGood){
-        warning("The bait protein ", BaitProteinName, " was not detected in ",
-                "the sample ", SampleName, ". The results for this sample ",
-                "will be excluded from the report.") 
+    if(!isGoodprot){
+        message("The bait protein ", BaitProteinName, " was not detected in ",
+                "the protein table for sample ", SampleName, ". The results ",
+                "for this sample will be excluded from the report.") 
     }
-    return(isGood)
+    isGoodpep <- str_to_lower(BaitProteinName)%in%negCtrls |
+        BaitProteinUniProtID%in%PeptideDat$`Master Protein Accessions`
+    if(!isGoodpep){
+        message("The bait protein ", BaitProteinName, " was not detected in ",
+                "the peptide table for sample ", SampleName, ". The results ",
+                "for this sample will be excluded from the report.") 
+    }
+    return(isGoodprot & isGoodpep)
 }
 
 #' Filter out rows for samples where the bait protein was not detected
@@ -28,6 +36,7 @@ checkProtein <- function(SampleName, BaitProteinName, BaitProteinUniProtID,
 checkBaitDetection <- function(sampleTab){
     areGood <- sampleTab %>% 
         mutate(ProteinDat = map(ProteinFile, read_tsv, col_type = cols())) %>%
+        mutate(PeptideDat = map(PeptideFile, read_tsv, col_type = cols())) %>%
         pmap(checkProtein) %>%   
         unlist()
     return(sampleTab[areGood,])

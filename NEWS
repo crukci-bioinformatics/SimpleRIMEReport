@@ -1,4 +1,9 @@
-VERSION 1.1.1
+VERSION 1.1.3
+------------------------
+ o Add a check that the bait protein ID is found in the peptide table for rare 
+   occurrences where it is in the protein table but not the peptide table.
+   
+VERSION 1.1.2
 ------------------------
  o Fix bug in "addFullTables" occuring when a sample is dropped due to no bait
    detection.

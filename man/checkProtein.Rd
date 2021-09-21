@@ -9,10 +9,12 @@ checkProtein(
   BaitProteinName,
   BaitProteinUniProtID,
   ProteinDat,
+  PeptideDat,
   ...
 )
 }
 \description{
 This function checks that the bait protein Uniprot ID is present in the 
-protein tables `Accession` column, or that the sample is a negative control.
+protein and peptide tables `Accession` column, or that the sample is a 
+negative control.
 }
