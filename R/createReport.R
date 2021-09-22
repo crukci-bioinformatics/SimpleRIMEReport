@@ -46,13 +46,8 @@ createReport <- function(sampleTable,
         mutate(across(ends_with("File"), ~str_c(dataDir, "/", .x)))
 
     # check that all the bait proteins were detected
-    sampleTable <- checkBaitDetection(sampleTable)
+    checkBaitDetection(sampleTable)
 
-    if(all(is.na(sampleTable$BaitProteinUniProtID))){
-        stop("There are no samples in which the bait protein provided was ",
-             "detected.")
-    }
-    
     # Check that the controls have not Bait Protein ID
     checkControlIDs(sampleTable)
     
