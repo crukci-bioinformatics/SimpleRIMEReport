@@ -52,11 +52,8 @@ createReport <- function(sampleTable,
     checkControlIDs(sampleTable)
     
     # Load  any additional fasta files and add to the annotation
-    if(!is.null(additionalFasta)){ 
-        annotTab <- loadCustomFasta(additionalFasta) 
-    }else{
-        annotTab <- annot
-        }
+    annotTab <- loadAnnotation(sampleTable, additionalFasta)
+    
     # load data
     protein_data <- getProteinTables(sampleTable, annotTab)
     peptide_data <- getPeptideTables(sampleTable)
