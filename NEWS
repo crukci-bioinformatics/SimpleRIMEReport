@@ -1,7 +1,12 @@
 VERSION 1.1.3
 ------------------------
- o Add a check that the bait protein ID is found in the peptide table for rare 
+ o Add a check that the bait protein ID is found in the peptide table for rare
    occurrences where it is in the protein table but not the peptide table.
+ o Add a check that the bait protein for the controls is NA
+ o Add a check that all bait proteins are found in the annotation or custom
+   fasta
+ o For all mistakes throw an error - do not as previously remove the sample and
+   continue with the report.
    
 VERSION 1.1.2
 ------------------------
