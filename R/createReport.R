@@ -52,7 +52,10 @@ createReport <- function(sampleTable,
         stop("There are no samples in which the bait protein provided was ",
              "detected.")
     }
-
+    
+    # Check that the controls have not Bait Protein ID
+    checkControlIDs(sampleTable)
+    
     # Load  any additional fasta files and add to the annotation
     if(!is.null(additionalFasta)){ 
         annotTab <- loadCustomFasta(additionalFasta) 
