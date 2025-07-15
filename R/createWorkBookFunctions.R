@@ -43,42 +43,42 @@ addPlots <- function(wb, plotsObj){
     }
     wb
 }
-    
+
 #' Header style for the tables
 #' @name hs
 #' @import openxlsx
 hs <- function(){
-    createStyle(fontColour = "#ffffff", 
+    createStyle(fontColour = "#ffffff",
                 fgFill = "#4F80BD",
-                halign = "center", 
+                halign = "center",
                 valign = "center",
                 border = "TopBottomLeftRight")
 }
 
 #' Add full data tables for each sample
-#' 
+#'
 #' This function adds one worksheet for each sample, with the complete protein
 #' details
 #' @name addFullTables
 #' @import openxlsx
-addFullTables <- function(wb, protData){
+addFullTables <- function(wb, protData, nSht){
     headStyle <- hs()
     for(sheetNum in seq_along(protData)){
         addWorksheet(wb, names(protData)[sheetNum])
-        showGridLines(wb, sheet = sheetNum, showGridLines = TRUE)
-        writeData(wb, 
-                  sheet = sheetNum + 1, 
-                  x = protData[[sheetNum]], 
+        showGridLines(wb, sheet = sheetNum + nSht, showGridLines = TRUE)
+        writeData(wb,
+                  sheet = sheetNum + nSht,
+                  x = protData[[sheetNum]],
                   headerStyle = headStyle)
-        setColWidths(wb, sheet = sheetNum + 1, cols = 1:3, widths = 16)
-        setColWidths(wb, sheet = sheetNum + 1, cols = 4, widths = 100)
-        setColWidths(wb, sheet = sheetNum + 1, cols = 5:6, widths = 18)
+        setColWidths(wb, sheet = sheetNum + nSht, cols = 1:3, widths = 16)
+        setColWidths(wb, sheet = sheetNum + nSht, cols = 4, widths = 100)
+        setColWidths(wb, sheet = sheetNum + nSht, cols = 5:6, widths = 18)
     }
     wb
 }
 
 #' Add complete combined data table
-#' 
+#'
 #' This function adds a worksheet with the combined table showing protein
 #' details for all samples
 #' @name addCombinedTable
@@ -87,14 +87,14 @@ addCombinedTable <- function(wb, combTab, sheetNum){
     headStyle <- hs()
     addWorksheet(wb, "Combined Data")
     writeData(wb, sheet = sheetNum, x = combTab, headerStyle = headStyle)
-    setColWidths(wb, sheet = sheetNum, cols = 1:3, widths = 16) 
-    setColWidths(wb, sheet = sheetNum, cols = 4, widths = 25) 
-    setColWidths(wb, sheet = sheetNum, cols = 5:ncol(combTab), widths = "auto") 
+    setColWidths(wb, sheet = sheetNum, cols = 1:3, widths = 16)
+    setColWidths(wb, sheet = sheetNum, cols = 4, widths = 25)
+    setColWidths(wb, sheet = sheetNum, cols = 5:ncol(combTab), widths = "auto")
     wb
 }
 
 #' Add complete filtered data table
-#' 
+#'
 #' This function adds a worksheet with the table showing protein details for all
 #' samples but with the non-specific binding proteins filtered out
 #' @name addFilteredTable
@@ -104,34 +104,41 @@ addFilteredTable <- function(wb, filtTab, sheetNum){
     headStyle <- hs()
     addWorksheet(wb, "Filtered Data")
     writeData(wb, sheet = sheetNum, x = filtTab, headerStyle = headStyle)
-    setColWidths(wb, sheet = sheetNum, cols = 1:3, widths = 16) 
-    setColWidths(wb, sheet = sheetNum, cols = 4, widths = 25) 
-    setColWidths(wb, sheet = sheetNum, cols = 5:ncol(filtTab), widths = "auto") 
+    setColWidths(wb, sheet = sheetNum, cols = 1:3, widths = 16)
+    setColWidths(wb, sheet = sheetNum, cols = 4, widths = 25)
+    setColWidths(wb, sheet = sheetNum, cols = 5:ncol(filtTab), widths = "auto")
     wb
 }
-    
+
 #' Create the workbook
-#' 
+#'
 #' This function creates a new work book and then adds the plots, individual
 #' data tables for each sample, the complete combined data and the filtered
 #' combinded data
 #' @name makeWorkBook
 #' @import openxlsx
 makeWorkBook <- function(outputFile, plotsList, protData, combData, filtData){
-                         
+
     # Create empty workbook
     wkbk <- createWorkbook(outputFile)
+    nSht <- 0
     # Generate Plots worksheet
-    wkbk <- addPlots(wkbk, plotsList)
+    if(length(plotsList) > 0) {
+        wkbk <- addPlots(wkbk, plotsList)
+        nSht <- nSht + 1
+    } else {
+        message("No coverage plots were generated, ",
+                "skipping the plots worksheet.")
+    }
     # Add full per sample results tables
-    wkbk <- addFullTables(wkbk, protData)
+    wkbk <- addFullTables(wkbk, protData, nSht)
+    nSht <- length(protData) + nSht
     # Add worksheet with combined table
-    nSht <- length(protData) + 2
-    wkbk <- addCombinedTable(wkbk, combData, nSht)
+    wkbk <- addCombinedTable(wkbk, combData, nSht + 1)
+    nSht <- nSht + 1
     # add worksheet with results filtgered by IgG
-    nSht <- length(protData) + 3
-    wkbk <- addFilteredTable(wkbk, filtData, nSht)
-    
+    wkbk <- addFilteredTable(wkbk, filtData, nSht + 1)
+
     # save workbook
     saveWorkbook(wkbk, outputFile, overwrite = TRUE)
 }

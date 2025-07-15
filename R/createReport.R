@@ -9,7 +9,7 @@
 #' @param additionalFasta character; a vector of paths to custom fasta files to
 #'   be included in the annotation (optional)
 #' @param outputFileName charcter; an output file name (optional)
-#' @details The sample table should contain 5 columns:  
+#' @details The sample table should contain 5 columns:
 ##' \itemize{
 ##'  \item{ ProteinFile - the file name for 'protiengroups' data }
 ##'  \item{ PeptideFile - the file name for 'psms' data }
@@ -24,25 +24,25 @@
 ##' }
 #' The proteins are filtered on the "Master" column, if present, to only keep
 #' proteins marked "IsMasterProtein".
-#' 
+#'
 #' @return NULL
 #' @examples
 #'
 #' @import stringr
 #'
 #' @export createReport
- 
+
 # @import GenomicRanges
 # @import Biostrings
 # @import openxlsx
 # @import cowplot
 
-createReport <- function(sampleTable, 
-                         dataDir, 
+createReport <- function(sampleTable,
+                         dataDir,
                          additionalFasta = NULL,
-                         outputFileName = NULL){
-    
-    sampleTable <- sampleTable %>% 
+                         outputFileName = NULL) {
+
+    sampleTable <- sampleTable %>%
         mutate(across(ends_with("File"), ~str_c(dataDir, "/", .x)))
 
     # check that all the bait proteins were detected
@@ -50,10 +50,10 @@ createReport <- function(sampleTable,
 
     # Check that the controls have not Bait Protein ID
     checkControlIDs(sampleTable)
-    
+
     # Load  any additional fasta files and add to the annotation
     annotTab <- loadAnnotation(sampleTable, additionalFasta)
-    
+
     # load data
     protein_data <- getProteinTables(sampleTable, annotTab)
     peptide_data <- getPeptideTables(sampleTable)
@@ -66,9 +66,9 @@ createReport <- function(sampleTable,
     coveragePlots <- makeCoveragePlots(sampleTable, peptide_data, annotTab)
 
     # make workbook
-    if(is.null(outputFileName)){
-        outputFileName <- str_c(dataDir, 
-                                "/", 
+    if (is.null(outputFileName)) {
+        outputFileName <- str_c(dataDir,
+                                "/",
                                 basename(dataDir),
                                 ".Simple_RIME_report.xlsx")
     }

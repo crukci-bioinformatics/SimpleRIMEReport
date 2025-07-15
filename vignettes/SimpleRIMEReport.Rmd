@@ -2,7 +2,7 @@
 title: "Simple RIME Report"
 author: Ashley Sawle
 date: "`r format(Sys.Date(), '%m/%d/%Y')`"
-output: 
+output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
@@ -12,12 +12,12 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-```{r setup, echo=FALSE, results="hide"}
+```{r setup, echo = FALSE, results = "hide"}
 knitr::opts_chunk$set(tidy = FALSE,
                       cache = FALSE,
                       dev = "png",
                       message = FALSE, error = FALSE, warning = TRUE)
-``` 
+```
 
 This document provides brief tutorial of the _SimpleRIMEReport_ package.
 
@@ -29,11 +29,11 @@ There are two steps to the process:
 1) Generate a sample sheet
 2) Generate the report
 
-After generating the sample sheet it is important to check the details to make 
+After generating the sample sheet it is important to check the details to make
 sure they are as you need them to be. In particular, the package will attempt
-to identify the correct UniProt ID for bait proteins, however, in some cases 
+to identify the correct UniProt ID for bait proteins, however, in some cases
 the same Gene Symbol will be associated with multiple UniProt IDs and you should
-select the correct one. Furthermore, if a custom database has been used, then 
+select the correct one. Furthermore, if a custom database has been used, then
 the package will not able to identify the accession ID for the protein.
 
 ## 1. Generate sample table
@@ -44,17 +44,17 @@ outputs. It uses the file names to generate a sample table.
 The sample table will be  saved in the data directory as
 "XXXXX_sample_details.csv"
 
-The sample table will contain 5 columns:  
+The sample table will contain 5 columns:
 
-* ProteinFile - the file name for 'protein groups' data  
-* PeptideFile - the file name for 'psms' data  
+* ProteinFile - the file name for 'protein groups' data
+* PeptideFile - the file name for 'psms' data
 * SampleName - the name for the sample - this is used for the plot titles and
-             the names of the worksheets  
+             the names of the worksheets
 * BaitProteinName - the protein name for the bait protein, e.g. ER, FOXA1 etc.
-                  This is only used in the plot titles, it could be anything  
+                  This is only used in the plot titles, it could be anything
 * BaitProteinUniProtID - the UniProt ID for the bait protein e.g. P03372, P55317
-                      this is used to look up the fasta sequence  
-                      
+                      this is used to look up the fasta sequence
+
 The function `createSampleTable` will attempt to guess the SampleName and
 BaitProteinName from the the protein file name. The function recognises outputs
 from Protein Discoverer version 1.4 and version 2.4.
@@ -63,37 +63,37 @@ For PD version 1.4 filenames are expected to have the following naming conventio
 
 `QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_proteingroups.txt`
 `QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_psms.txt`
- 
+
 For PD version 2.4 filenames are expected to have the following naming convention:
 
 `QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_Proteins.txt`
 `QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_PeptideGroups.txt`
 
-The SampleName can include "_" e.g.:  
+The SampleName can include "_" e.g.:
 
 `QE_HF_04092018_PR1025_SAN_Sample1_VEH_ARID2_proteingroups.txt`
 
 gives:
 
-  SampleName: "Sample1_VEH"  
-  BaitProteinName: "ARID2"  
+  SampleName: "Sample1_VEH"
+  BaitProteinName: "ARID2"
 
 You'll need to check the sample table and modify as necessary before
 proceeding. The sample table can either be modified directly in R, or you can
 open the saved version in a spreadsheet (e.g. Excel) and edit it and the load it
 back into R.
 
-```{r eval=FALSE}
+```{r eval = FALSE}
 library(SimpleRIMEReport)
 sampleData <- createSampleTable("My_Data_Directory")
 ```
 
-This will create a table called `sampleData` and will save a copy of this to 
+This will create a table called `sampleData` and will save a copy of this to
 `My_Data_Directory/My_Data_Directory_sample_details.csv`.
 
 If you edit the report in Excel, you will then need to reload the sample table:
 
-```{r eval=FALSE}
+```{r eval = FALSE}
 library(readr)
 sampleData <- read_csv("My_Data_Directory/My_Data_Directory_sample_details.csv")
 ```
@@ -106,59 +106,59 @@ to generate the report.
 If the "Master" column is present, the proteins are filtered to only keep
 proteins marked "IsMasterProtein".
 
-```{r eval=FALSE}
+```{r eval = FALSE}
 createReport(sampleData)
 ```
 
-This will create the report called: 
+This will create the report called:
 `My_Data_Directory/My_Data_Directory.Simple_RIME_report.xlsx`.
 
 You can optionally provide an alternative name for the report e.g.:
 
-```{r eval=FALSE}
+```{r eval = FALSE}
 createReport(sampleData, outputFileName = "RIME_reports/A_New_RIME_Report.xlsx")
 ```
 
-This would create the report called `A_New_RIME_Report.xlsx` in the directory 
+This would create the report called `A_New_RIME_Report.xlsx` in the directory
 `RIME_reports`. Note that the directory "RIME_reports" would not be created
 by the function, it would have to already exist.
 
 ### Custom FASTA files
 
-If custom FASTA files (non-UniProt) have been used in the Protein Discoverer 
+If custom FASTA files (non-UniProt) have been used in the Protein Discoverer
 analysis, these should also be provided to the `createReport` function so that
-the proteins can be correctly annotated and so that the amino acid sequence is 
+the proteins can be correctly annotated and so that the amino acid sequence is
 available for the plot.
 
-```{r eval=FALSE}
+```{r eval = FALSE}
 createReport(sampleData, additionalFasta = "My_Data_Directory/My_Protein.fasta")
 ```
 
 You can provide more than one fasta:
 
 
-```{r eval=FALSE}
-myFastaFiles <- c("My_Data_Directory/My_Protein1.fasta", 
+```{r eval = FALSE}
+myFastaFiles <- c("My_Data_Directory/My_Protein1.fasta",
                   "My_Data_Directory/My_Protein2.fasta",
                   "My_Data_Directory/My_Protein3.fasta")
 createReport(sampleData, additionalFasta = myFastaFiles)
 ```
 
-The Accession, Gene ID and description for the annotation will be extracted 
-from the header for each sequence; the expected format is:  
+The Accession, Gene ID and description for the annotation will be extracted
+from the header for each sequence; the expected format is:
 
 `>sp|<Accession>|<GeneID> <Description>`
-    
+
 e.g.:
 
-`>sp|NUP98-HOXA9|NUP98-HOXA9_HUMAN OS=Homo sapiens`
+`>sp|NUP98-HOXA9|NUP98-HOXA9_HUMAN OS = Homo sapiens`
 
 where the Accession is `NUP98-HOXA9` and the Gene ID is `NUP98-HOXA9_HUMAN`. Any
 further information is add to the Description.
 
 ## Session Information
 
-```{r info,echo=TRUE}
+```{r info,echo = TRUE}
 sessionInfo()
 ```
 

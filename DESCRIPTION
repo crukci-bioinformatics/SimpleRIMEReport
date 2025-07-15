@@ -5,11 +5,10 @@ Version: 1.1.3
 Author: Ashley Sawle
 Maintainer: Ashley Sawle <Ashley.Sawle@cruk.cam.ac.uk>
 Description: The package takes the protein and peptide outputs from Proteome
-    Discover for a simple RIME experiment and generates a report in the form of
-    an Excel workbook. The package is able to combine the results for multiple
-    samples, with multiple pull downs, into a single report. A negative
-    control (e.g. IgG) is required in order to filter out non-specific
-    binding.
+    Discoverer for a simple RIME experiment and generates a report in the form
+    of an Excel workbook. The package is able to combine the results for
+    multiple samples, with multiple pull downs, into a single report. A negative
+    control (e.g. IgG) is required in order to filter out non-specific binding.
 License: GPL-2
 Imports: Biostrings, 
          cowplot,
