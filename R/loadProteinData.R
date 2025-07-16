@@ -42,7 +42,7 @@ loadProteinTable <- function(filePath, annotTab) {
 #' @import dplyr
 #' @import readr
 #' @import purrr
-getProteinTables <- function(sampleTab, annotTab){
+getProteinTables <- function(sampleTab, annotTab) {
     sampleTab %>%
         mutate(ProteinTable = map(ProteinFile,
                                   ~loadProteinTable(.x, annotTab = annotTab)))

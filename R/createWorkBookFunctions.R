@@ -6,11 +6,11 @@
 #' length for the bait protein.
 #' @name addPlots
 #' @import openxlsx
-addPlots <- function(wb, plotsObj){
+addPlots <- function(wb, plotsObj) {
     addWorksheet(wb, sheetName = "Coverage Plots", zoom = 75)
     showGridLines(wb, sheet = 1, showGridLines = FALSE)
     rowNum <- 1
-    for(plotNum in seq_along(plotsObj)){
+    for (plotNum in seq_along(plotsObj)){
         # summary coverage map
         print(plotsObj[[plotNum]]$CoverageMap)
         insertPlot(wb,
@@ -47,7 +47,7 @@ addPlots <- function(wb, plotsObj){
 #' Header style for the tables
 #' @name hs
 #' @import openxlsx
-hs <- function(){
+hs <- function() {
     createStyle(fontColour = "#ffffff",
                 fgFill = "#4F80BD",
                 halign = "center",
@@ -61,9 +61,9 @@ hs <- function(){
 #' details
 #' @name addFullTables
 #' @import openxlsx
-addFullTables <- function(wb, protData, nSht){
+addFullTables <- function(wb, protData, nSht) {
     headStyle <- hs()
-    for(sheetNum in seq_along(protData)){
+    for (sheetNum in seq_along(protData)){
         addWorksheet(wb, names(protData)[sheetNum])
         showGridLines(wb, sheet = sheetNum + nSht, showGridLines = TRUE)
         writeData(wb,
@@ -83,7 +83,7 @@ addFullTables <- function(wb, protData, nSht){
 #' details for all samples
 #' @name addCombinedTable
 #' @import openxlsx
-addCombinedTable <- function(wb, combTab, sheetNum){
+addCombinedTable <- function(wb, combTab, sheetNum) {
     headStyle <- hs()
     addWorksheet(wb, "Combined Data")
     writeData(wb, sheet = sheetNum, x = combTab, headerStyle = headStyle)
@@ -100,7 +100,7 @@ addCombinedTable <- function(wb, combTab, sheetNum){
 #' @name addFilteredTable
 #' @import openxlsx
 # Filtered data table
-addFilteredTable <- function(wb, filtTab, sheetNum){
+addFilteredTable <- function(wb, filtTab, sheetNum) {
     headStyle <- hs()
     addWorksheet(wb, "Filtered Data")
     writeData(wb, sheet = sheetNum, x = filtTab, headerStyle = headStyle)
@@ -117,13 +117,13 @@ addFilteredTable <- function(wb, filtTab, sheetNum){
 #' combinded data
 #' @name makeWorkBook
 #' @import openxlsx
-makeWorkBook <- function(outputFile, plotsList, protData, combData, filtData){
+makeWorkBook <- function(outputFile, plotsList, protData, combData, filtData) {
 
     # Create empty workbook
     wkbk <- createWorkbook(outputFile)
     nSht <- 0
     # Generate Plots worksheet
-    if(length(plotsList) > 0) {
+    if (length(plotsList) > 0) {
         wkbk <- addPlots(wkbk, plotsList)
         nSht <- nSht + 1
     } else {

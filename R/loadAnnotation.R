@@ -32,7 +32,7 @@ addAnnotation <- function(annotTab, additionalFasta) {
         select(-DB)
 
     # Check the the additional annotation has an Accessions column
-    msg <- vector() 
+    msg <- vector()
     if (!"Accession" %in% colnames(addAnnot)) {
         msg <- str_c("The additional annotation does not have an 'Accession'",
                      " column. \n")
@@ -72,7 +72,7 @@ checkAnnForBait <- function(sampleTab, annotTab) {
     baitIDs <- sampleTab %>%
         filter(!is.na(BaitProteinUniProtID)) %>%
         pull(BaitProteinUniProtID)
-    if(!all(baitIDs %in% annotTab$Accession)) {
+    if (!all(baitIDs %in% annotTab$Accession)) {
         missingBaits <- baitIDs[!(baitIDs %in% annot$Accession)] %>%
             unique() %>%
             str_c("\t", .) %>%

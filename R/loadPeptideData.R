@@ -1,4 +1,4 @@
-#' Load pepti
+#' Load peptide table
 loadPeptideTable <- function(filePath) {
     # Read the peptide data file
     read_tsv(filePath, show_col_types = FALSE) %>%
@@ -10,11 +10,11 @@ loadPeptideTable <- function(filePath) {
 #' Get peptide tables
 #'
 #' This function reads each Peptide data file into a list column in the sample
-#table. 
+#table.
 #' @name getPeptideTables
 #' @import readr
 #' @import purrr
-getPeptideTables <- function(sampleTab){
+getPeptideTables <- function(sampleTab) {
     sampleTab %>%
         mutate(PeptideTable = map(PeptideFile, loadPeptideTable))
 }

@@ -6,15 +6,15 @@
 #' @import stringr
 #' @import tibble
 #' @importFrom magrittr %>%
-filenametotable <- function(fileName){
+filenametotable <- function(fileName) {
     dat <- str_split(fileName, "_")[[1]]
     len <- length(dat)
     tibble(ProteinFile = fileName,
            PeptideFile = str_replace_all(ProteinFile,
-                                       c(Proteins.txt = "PeptideGroups.txt",
-                                         proteingroups.txt = "psms.txt")),
+                                         c(Proteins.txt = "PeptideGroups.txt",
+                                           proteingroups.txt = "psms.txt")),
            SampleName = str_c(dat[6:(len-2)], collapse = "_"),
-           BaitProteinName = dat[len-1])
+           BaitProteinName = dat[len - 1])
 }
 
 #' Create the sample table based on files in the data directory
@@ -25,13 +25,15 @@ filenametotable <- function(fileName){
 #'
 #' @param dataDir character; Path to directory containing the Proteome
 #'   Discoverer output files
-#' @details The files required for each sample are a Protein table and a Peptide table.
-#' For PD version 1.4 filenames are expected to have the following naming convention:
-#'
+#' @details The files required for each sample are a Protein table and a Peptide
+#' table. For PD version 1.4 filenames are expected to have the following naming
+#' convention: '
+#' 
 #' QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_proteingroups.txt
 #' QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_psms.txt
 #'
-#' For PD version 2.4 filenames are expected to have the following naming convention:
+#' For PD version 2.4 filenames are expected to have the following naming
+#' convention:
 #'
 #' QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_Proteins.txt
 #' QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_PeptideGroups.txt
