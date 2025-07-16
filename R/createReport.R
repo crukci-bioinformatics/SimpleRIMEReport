@@ -45,25 +45,39 @@ createReport <- function(sampleTable,
     sampleTable <- sampleTable %>%
         mutate(across(ends_with("File"), ~str_c(dataDir, "/", .x)))
 
-    # check that all the bait proteins were detected
-    checkBaitDetection(sampleTable)
-
-    # Check that the controls have not Bait Protein ID
-    checkControlIDs(sampleTable)
+    #Note `annot` is loaded automatically from R/sysdata.rda
+    annotTab <- annot
 
     # Load  any additional fasta files and add to the annotation
-    annotTab <- loadAnnotation(sampleTable, additionalFasta)
+    if (!is.null(additionalFasta)) {
+        annotTab <- addAnnotation(annotTab, additionalFasta)
+    }
 
-    # load data
-    protein_data <- getProteinTables(sampleTable, annotTab)
-    peptide_data <- getPeptideTables(sampleTable)
+    # Check that the annotation has the baits
+    checkAnnForBait(sampleTable, annotTab)
+
+    # load peptide data and check for bait proteins
+    sampleTable <- getPeptideTables(sampleTable)
+    checkBaitDetection(sampleTable, type = "peptide")
+
+    # load the protein data and check for bait proteins
+    sampleTable <- getProteinTables(sampleTable, annotTab)
+    checkBaitDetection(sampleTable, type = "protein")
+
+    # filter the protein data and check for bait proteins
+    sampleTable <- filterProteinTables(sampleTable)
+    checkBaitDetection(sampleTable, type = "filtered protein")
 
     # make merged tables
-    combined_data <- combineProteinTables(sampleTable, annotTab)
-    filtered_data <- filterCombinedTable(sampleTable, annotTab)
+    combined_data <- combineProteinTables(sampleTable)
+    filtered_data <- filterCombinedTable(sampleTable)
 
     # make plots
-    coveragePlots <- makeCoveragePlots(sampleTable, peptide_data, annotTab)
+    coveragePlots <- makeCoveragePlots(sampleTable, annotTab)
+
+    # make protein data list
+    proteinData <- sampleTable$ProteinTable
+    names(proteinData) <- sampleTable$SampleName
 
     # make workbook
     if (is.null(outputFileName)) {
@@ -73,9 +87,9 @@ createReport <- function(sampleTable,
                                 ".Simple_RIME_report.xlsx")
     }
     makeWorkBook(outputFileName,
-                 coveragePlots,
-                 protein_data,
-                 combined_data,
-                 filtered_data)
+                 plotsList = coveragePlots,
+                 protData = proteinData,
+                 combData = combined_data,
+                 filtData = filtered_data)
     message("Report written to ", outputFileName)
 }

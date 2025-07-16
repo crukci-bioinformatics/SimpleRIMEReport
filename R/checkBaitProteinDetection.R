@@ -3,39 +3,21 @@ getNegCtrls <- function() {
     c("igg", "control", "empty", "none")
 }
 
-#' Check that the bait protein is present in the samples protein table
+#' Check that the bait protein is present in the table
 #'
 #' This function checks that the bait protein Uniprot ID is present in the
-#' protein table's `Accession` column
-#' @name checkProtein
+#' table's `Accessions` column
+#' @name checkBait
 #' @import stringr
-checkProtein <- function(SampleName, ProteinFile, BaitProteinUniProtID, ...) {
-    proteinAcc <- read_tsv(ProteinFile, col_type = cols()) %>%
-        pull(Accession)
+checkBait <- function(SampleName, Table, BaitProteinUniProtID, Type, ...) {
+    protAcc <- Table$Accession
 
-    if (!BaitProteinUniProtID %in% proteinAcc) {
+    if (!BaitProteinUniProtID %in% protAcc) {
         message("The bait protein ",
                 BaitProteinUniProtID,
-                " was not detected in the protein table for sample ",
-                SampleName,
-                ".")
-    }
-}
-
-#' Check that the bait protein is present in the samples peptide table
-#'
-#' This function checks that the bait protein Uniprot ID is present in the
-#' peptide table's `Master Protein Accessions` column
-#' @name checkPeptide
-#' @import stringr
-checkPeptide <- function(SampleName, PeptideFile, BaitProteinUniProtID, ...) {
-    peptideAcc <- read_tsv(PeptideFile, col_type = cols()) %>%
-        pull(`Master Protein Accessions`)
-
-    if (!BaitProteinUniProtID %in% peptideAcc) {
-        message("The bait protein ",
-                BaitProteinUniProtID,
-                " was not detected in the peptide table for sample ",
+                " was not detected in the ",
+                Type,
+                " table for sample ",
                 SampleName,
                 ".")
     }
@@ -49,10 +31,13 @@ checkPeptide <- function(SampleName, PeptideFile, BaitProteinUniProtID, ...) {
 #' @import purrr
 #' @import dplyr
 #' @importFrom magrittr %>%
-checkBaitDetection <- function(sampleTab) {
+checkBaitDetection <- function(sampleTab, type = "protein") {
     negCtrls <- getNegCtrls()
+    tabCol <- ifelse(type == "peptide", "PeptideTable", "ProteinTable")
     sampleTab %>%
+        mutate(across(BaitProteinName, str_to_lower)) %>%
         filter(!BaitProteinName %in% negCtrls) %>%
-        pwalk(checkProtein) %>%
-        pwalk(checkPeptide)
+        rename(Table = !!tabCol) %>%
+        mutate(Type = type) %>%
+        pwalk(checkBait)
 }

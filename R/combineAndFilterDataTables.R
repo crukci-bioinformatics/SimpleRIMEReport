@@ -4,25 +4,26 @@
 #' @name getNonSpecificProteins
 #' @import dplyr
 #' @import stringr
-addSampleName <- function(tab, sampleName){
-    rename_with(tab, ~str_c(sampleName, " ", .), -Accession)
+addSampleName <- function(tab, sampleName) {
+    rename_with(tab,
+                ~str_c(sampleName, " ", .),
+                c("Coverage", "Unique Peptides"))
 }
 
 #' Combine all protein data into a single table
 #'
 #' Read all the protein data tables, combine them into a single table - add the
-#' sample name to the beginning of each header - and add annotation.
+#' sample name to the beginning of each header.
 #' @name combineProteinTables
 #' @import dplyr
 #' @import purrr
-combineProteinTables <- function(sampleTab, annotTab){
-    loadProteinData(sampleTab) %>%
+combineProteinTables <- function(sampleTab) {
+    pull(sampleTab, ProteinTable) %>%
         map2(sampleTab$SampleName, addSampleName) %>%
-        reduce(full_join, by = "Accession") %>%
-        left_join(annotTab, by = c("Accession" = "Accession")) %>%
-        select(Accession, Gene,
-               `Gene Symbol` = GeneSymbol, Description,
-               everything(), -Sequence)
+        reduce(full_join, by = c("Accession",
+                                 "Gene",
+                                 "Gene Symbol",
+                                 "Description"))
 }
 
 #' Get Non-specific proteins
@@ -34,10 +35,10 @@ combineProteinTables <- function(sampleTab, annotTab){
 #' @import dplyr
 #' @import stringr
 #' @import purrr
-getNonSpecificProteins <- function(sampleTab){
+getNonSpecificProteins <- function(sampleTab) {
     sampleTab %>%
         filter(SampleType == "Control") %>%
-        loadProteinData() %>%
+        pull(ProteinTable) %>%
         reduce(full_join, by = "Accession") %>%
         pull(Accession) %>%
         unique()
@@ -46,25 +47,17 @@ getNonSpecificProteins <- function(sampleTab){
 #' Create filtered protein table
 #'
 #' Read all the protein data tables for the baited samples, combine them into a
-#' single table - add the sample name to the beginning of each header - and add
-#' annotation. Then filter out all proteins that are detected in the negative
+#' single table. Then filter out all proteins that are detected in the negative
 #' controls.
 #' @name filterCombinedTable
 #' @import dplyr
 #' @import stringr
 #' @import purrr
-filterCombinedTable <- function(sampleTab, annotTab){
+filterCombinedTable <- function(sampleTab) {
     non_specific <- getNonSpecificProteins(sampleTab)
 
-    sampleTab <- sampleTab %>%
-        filter(SampleType != "Control")
-
-    loadProteinData(sampleTab) %>%
-        map2(sampleTab$SampleName, addSampleName) %>%
-        reduce(full_join, by = "Accession") %>%
-        left_join(annotTab, by = c("Accession" = "Accession")) %>%
-        select(Accession, Gene,
-               `Gene Symbol` = GeneSymbol, Description,
-               everything(), -Sequence) %>%
+    sampleTab %>%
+        filter(SampleType != "Control") %>%
+        combineProteinTables() %>%
         filter(!Accession %in% non_specific)
 }

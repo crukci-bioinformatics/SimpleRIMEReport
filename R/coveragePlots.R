@@ -7,12 +7,12 @@
 #' @import purrr
 #' @import readr
 #' @importFrom Biostrings AAStringSet
-createFastaTable <- function(sampleTab, annotTab){
+createFastaTable <- function(sampleTab, annotTab) {
     sampleTab %>%
-        filter(!is.na(BaitProteinUniProtID) & GoodBait) %>%
+        filter(!is.na(BaitProteinUniProtID)) %>%
         select(BaitProteinUniProtID) %>%
         distinct() %>%
-        left_join(annotTab, by = c("BaitProteinUniProtID" = "Accession")) %>%
+        inner_join(annotTab, by = c("BaitProteinUniProtID" = "Accession")) %>%
         mutate(ProteinSeq = map(Sequence, AAStringSet)) %>%
         select(BaitProteinUniProtID, ProteinSeq)
 }
@@ -28,18 +28,18 @@ createFastaTable <- function(sampleTab, annotTab){
 #' @importFrom magrittr %>%
 #' @import purrr
 #' @import stringr
-covPlot1 <- function(Protein_seq, features, plotTitle){
+covPlot1 <- function(Protein_seq, features, plotTitle) {
     # get percent coverage
     protWidth <- str_length(as.character(Protein_seq))
     coverage <-  map2(features$start, features$end, seq) %>%
         unlist() %>%
         unique() %>%
         length()
-    Perct <- round(coverage / protWidth * 100, 2)
-    SubTitle <- str_c("Number of Unique Peptides: ",
-                       nrow(features),
-                       "\n% Coverage: ",
-                       Perct)
+    perct <- round(coverage / protWidth * 100, 2)
+    subTitle <- str_c("Number of Unique Peptides: ",
+                      nrow(features),
+                      "\n% Coverage: ",
+                      perct)
 
     # set the tick positions for the plot
     nTicks <- min(c(7, ceiling(protWidth / 50) + 1))
@@ -56,21 +56,23 @@ covPlot1 <- function(Protein_seq, features, plotTitle){
                   ymax = 10,
                   colour = "black",
                   fill = NA,
-                  size = 1) +
-        labs(title = plotTitle, subtitle = SubTitle) +
+                  linewidth = 1) +
+        labs(title = plotTitle, subtitle = subTitle) +
         theme(
             axis.line = element_blank(),
             axis.title.y = element_blank(),
             axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
             panel.background = element_rect(fill = "white"),
-            panel.border = element_rect(colour = "black", fill = NA, size = 3),
+            panel.border = element_rect(colour = "black",
+                                        fill = NA,
+                                        linewidth = 3),
             plot.subtitle = element_text(hjust = 0.5),
             plot.title = element_text(hjust = 0.5)
         ) +
         scale_x_continuous(limits = c(0, protWidth),
                            breaks = brkTicks,
-                           expand = c(0,0)) +
+                           expand = c(0, 0)) +
         scale_y_continuous(limits = c(0, 10),
                            breaks = c(0, 10),
                            expand = c(0, 0))
@@ -88,15 +90,15 @@ covPlot1 <- function(Protein_seq, features, plotTitle){
 #' @importFrom magrittr %>%
 #' @import purrr
 #' @import stringr
-covPlot2 <- function(Protein_seq, features){
+covPlot2 <- function(Protein_seq, features) {
     aaSeq <- str_split(as.character(Protein_seq), "")[[1]]
     len <- length(aaSeq)
     xIndex  <- rep(1:109, 100)
-    xIndex <- xIndex[!(xIndex%%11 == 0)]
+    xIndex <- xIndex[!(xIndex %% 11 == 0)]
     xIndex <- xIndex[1:len]
     yIndex <- rep(1:100, each = 100)[1:len]
     aaPosition <- 1:1e5
-    aaPosition[!(aaPosition%%10 %in% c(0, 1))] <- "..."
+    aaPosition[!(aaPosition %% 10 %in% c(0, 1))] <- "..."
     aaPosition <- aaPosition[1:len]
     aaPosition[len] <- len
     aaHits <- rep("", len)
@@ -145,17 +147,26 @@ getPosition <- function(peptideSeq, ProteinSeq) {
 #' @importFrom magrittr %>%
 #' @import purrr
 #' @import stringr
-coveragePlots <- function(SampleName, BaitProteinName, BaitProteinUniProtID,
-                         PeptideData, ProteinSeq, ...) {
+coveragePlots <- function(SampleName,
+                          BaitProteinName,
+                          BaitProteinUniProtID,
+                          PeptideTable,
+                          ProteinSeq,
+                          ...) {
 
-   features <- PeptideData %>%
-       filter(Accessions == BaitProteinUniProtID) %>%
-       pull(Sequence) %>%
-       toupper() %>%
-       unique() %>%
-       map_dfr(getPosition, ProteinSeq = ProteinSeq)
+    features <- PeptideTable %>%
+        filter(Accession == BaitProteinUniProtID) %>%
+        pull(Sequence) %>%
+        toupper() %>%
+        unique() %>%
+        map_dfr(getPosition, ProteinSeq = ProteinSeq)
 
-    title <- str_c(SampleName, ": ", BaitProteinName, " (", BaitProteinUniProtID, ")")
+    title <- str_c(SampleName,
+                   ": ",
+                   BaitProteinName,
+                   " (",
+                   BaitProteinUniProtID,
+                   ")")
     cvp1 <- covPlot1(ProteinSeq, features, title)
     cvp2 <- covPlot2(ProteinSeq, features)
     list(CoverageMap = cvp1,
@@ -174,10 +185,14 @@ coveragePlots <- function(SampleName, BaitProteinName, BaitProteinUniProtID,
 #' @import dplyr
 #' @import purrr
 #' @importFrom magrittr %>%
-makeCoveragePlots <- function(sampleTab, peptideDat, annotTab){
+makeCoveragePlots <- function(sampleTab, annotTab) {
     fastaTab <- createFastaTable(sampleTab, annotTab)
+
     sampleTab %>%
-        mutate(PeptideData = peptideDat) %>%
+        mutate(CheckBait = map2_lgl(BaitProteinUniProtID,
+                                    PeptideTable,
+                                    ~ .x %in% .y$Accession))  %>%
+        filter(CheckBait) %>%
         inner_join(fastaTab, by = "BaitProteinUniProtID") %>%
         pmap(coveragePlots)
 }
