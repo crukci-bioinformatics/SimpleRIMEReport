@@ -133,9 +133,9 @@ This would create the report called `A_New_RIME_Report.xlsx` in the directory
 `RIME_reports`. Note that the directory "RIME_reports" would not be created
 by the function, it would have to already exist.
 
-## Annotation
+### Annotation
 
-The packages uses and internal copy of the SwissProt FASTA file to annotate the
+The packages uses an internal copy of the SwissProt FASTA file to annotate the
 proteins in the report. This is stored in the package and was last update 15th
 July 2025.
 
