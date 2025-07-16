@@ -29,31 +29,31 @@ There are two steps to the process:
 1) Generate a sample sheet
 2) Generate the report
 
-After generating the sample sheet it is important to check the details to make
-sure they are as you need them to be. In particular, the package will attempt
-to identify the correct UniProt ID for bait proteins, however, in some cases
-the same Gene Symbol will be associated with multiple UniProt IDs and you should
-select the correct one. Furthermore, if a custom database has been used, then
-the package will not able to identify the accession ID for the protein.
-
 ## 1. Generate sample table
 
-The function `createSampleTable` requires the directory that contains the PD
-outputs. It uses the file names to generate a sample table.
-
-The sample table will be  saved in the data directory as
-"XXXXX_sample_details.csv"
-
-The sample table will contain 5 columns:
+The sample table needs to contain 6 columns:
 
 * ProteinFile - the file name for 'protein groups' data
 * PeptideFile - the file name for 'psms' data
 * SampleName - the name for the sample - this is used for the plot titles and
              the names of the worksheets
 * BaitProteinName - the protein name for the bait protein, e.g. ER, FOXA1 etc.
-                  This is only used in the plot titles, it could be anything
+                  This is only used in the plot titles, it could be anything,
+                  however, if there is no bait protein it should be one of
+                  "IgG", "Empty", "None", or "Control".
 * BaitProteinUniProtID - the UniProt ID for the bait protein e.g. P03372, P55317
-                      this is used to look up the fasta sequence
+                      this is used to look up the fasta sequence. If there is
+                      no bait protein, then this should be left empty.
+* SampleType - whether the sample is a "control" sample or something else.
+              This is used in determining which samples are used to identify
+              background proteins. 
+
+The sample table can be created by hand using a spreadsheet, alternatively, the
+package provides the function `createSampleTable` to help you generate a
+suitable sample table.
+
+The function `createSampleTable` requires the directory that contains the PD
+outputs. It uses the file names to generate a sample table.
 
 The function `createSampleTable` will attempt to guess the SampleName and
 BaitProteinName from the the protein file name. The function recognises outputs
@@ -75,13 +75,23 @@ The SampleName can include "_" e.g.:
 
 gives:
 
-  SampleName: "Sample1_VEH"
-  BaitProteinName: "ARID2"
+* SampleName: "Sample1_VEH"  
+* BaitProteinName: "ARID2"
 
-You'll need to check the sample table and modify as necessary before
-proceeding. The sample table can either be modified directly in R, or you can
-open the saved version in a spreadsheet (e.g. Excel) and edit it and the load it
-back into R.
+After generating the sample sheet it is important to check the details to make
+sure they are as you need them to be. In particular, the package will attempt
+to identify the correct UniProt ID for bait proteins, however, in some cases
+the same Gene Symbol will be associated with multiple UniProt IDs and you should
+select the correct one. Furthermore, if a custom database has been used, then
+the package will not able to identify the accession ID for the protein.
+
+The sample table will be  saved in the data directory as
+"XXXXX_sample_details.csv" where XXXXX is the name of the data directory.
+
+If the file names do not follow the above convention, then you'll need to modify
+the sample sheet as necessary before proceeding. The sample table can either be
+modified directly in R, or you can open the saved version in a spreadsheet (e.g.
+Excel) and edit it and the load it back into R.
 
 ```{r eval = FALSE}
 library(SimpleRIMEReport)
@@ -123,38 +133,43 @@ This would create the report called `A_New_RIME_Report.xlsx` in the directory
 `RIME_reports`. Note that the directory "RIME_reports" would not be created
 by the function, it would have to already exist.
 
+## Annotation
+
+The packages uses and internal copy of the SwissProt FASTA file to annotate the
+proteins in the report. This is stored in the package and was last update 15th
+July 2025.
+
 ### Custom FASTA files
 
-If custom FASTA files (non-UniProt) have been used in the Protein Discoverer
-analysis, these should also be provided to the `createReport` function so that
-the proteins can be correctly annotated and so that the amino acid sequence is
-available for the plot.
+If custom FASTA files have been used in the Protein Discoverer analysis, these
+should also be provided to the `createReport` function so that the proteins can
+be correctly annotated and so that the amino acid sequence is available for the
+plot.
 
 ```{r eval = FALSE}
 createReport(sampleData, additionalFasta = "My_Data_Directory/My_Protein.fasta")
 ```
 
-You can provide more than one fasta:
-
-
-```{r eval = FALSE}
-myFastaFiles <- c("My_Data_Directory/My_Protein1.fasta",
-                  "My_Data_Directory/My_Protein2.fasta",
-                  "My_Data_Directory/My_Protein3.fasta")
-createReport(sampleData, additionalFasta = myFastaFiles)
-```
-
 The Accession, Gene ID and description for the annotation will be extracted
 from the header for each sequence; the expected format is:
 
-`>sp|<Accession>|<GeneID> <Description>`
+`>{Database}|{Accession}|{GeneID} {Description}`
 
-e.g.:
+This is the standard format of the header in FASTA files downloaded from
+UniProt, for example:
 
 `>sp|NUP98-HOXA9|NUP98-HOXA9_HUMAN OS = Homo sapiens`
 
-where the Accession is `NUP98-HOXA9` and the Gene ID is `NUP98-HOXA9_HUMAN`. Any
-further information is add to the Description.
+where `sp` means this is a SwissProt entry, the Accession is `NUP98-HOXA9` and
+the Gene ID is `NUP98-HOXA9_HUMAN`. Any further information is add to the
+Description.
+
+Accessions **must** be unique within the annotation. If the additional annotation
+derived from the FASTA file contains accessions that are already present in SwissProt
+these will be dropped from the internal SwissProt annotation on the basis that the
+(presumably) modified entry in the additional FASTA is required.
+
+The new annotation will be checked for duplicated or missing accessions.
 
 ## Session Information
 
