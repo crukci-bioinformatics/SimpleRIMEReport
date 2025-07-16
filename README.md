@@ -20,4 +20,4 @@ You can read the vignette by running the following command in R:
 vignette("SimpleRIMEReport")
 ```
 
-or view it [here](docs/SimpleRIMEReport.html).
+or view it [here](https://crukci-bioinformatics.github.io/SimpleRIMEReport/).
