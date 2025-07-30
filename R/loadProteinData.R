@@ -7,7 +7,6 @@
 selectColumns <- function(x) {
     dplyr::select(x,
                   Accession,
-                  Coverage = contains("Coverage"),
                   `Unique Peptides` = `# Unique Peptides`,
                   any_of("Master"))
 }

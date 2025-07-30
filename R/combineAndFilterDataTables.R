@@ -6,8 +6,8 @@
 #' @import stringr
 addSampleName <- function(tab, sampleName) {
     rename_with(tab,
-                ~str_c(sampleName, " ", .),
-                c("Coverage", "Unique Peptides"))
+           ~str_c(sampleName, " ", .),
+           "Unique Peptides")
 }
 
 #' Combine all protein data into a single table
