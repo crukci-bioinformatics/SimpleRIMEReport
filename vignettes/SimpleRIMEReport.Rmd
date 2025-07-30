@@ -1,7 +1,7 @@
 ---
 title: "Simple RIME Report"
 author: Ashley Sawle
-date: "`r format(Sys.Date(), '%m/%d/%Y')`"
+date: "`r format(Sys.Date(), '%d/%m/%Y')`"
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -26,40 +26,67 @@ and Peptides output of Proteome Discoverer.
 
 There are two steps to the process:
 
-1) Generate a sample sheet
+1) Generate a sample table
 2) Generate the report
 
 ## 1. Generate sample table
 
+The main input for the report is a sample table that contains the details of
+the samples that you want to include in the report. The sample table is a
+data frame that contains the details of each sample.
+
+The sample table can be created by hand or generated using the function
+`createSampleTable`.
+
+### Sample table format
+
 The sample table needs to contain 6 columns:
 
-* ProteinFile - the file name for 'protein groups' data
-* PeptideFile - the file name for 'psms' data
-* SampleName - the name for the sample - this is used for the plot titles and
-             the names of the worksheets
-* BaitProteinName - the protein name for the bait protein, e.g. ER, FOXA1 etc.
-                  This is only used in the plot titles, it could be anything,
-                  however, if there is no bait protein it should be one of
-                  "IgG", "Empty", "None", or "Control".
-* BaitProteinUniProtID - the UniProt ID for the bait protein e.g. P03372, P55317
-                      this is used to look up the fasta sequence. If there is
-                      no bait protein, then this should be left empty.
-* SampleType - whether the sample is a "control" sample or something else.
-              This is used in determining which samples are used to identify
-              background proteins. 
+* **ProteinFile** - the file name for 'protein groups' data
+* **PeptideFile** - the file name for 'psms' data
+* **SampleName** - the name for the sample - this is used for the plot titles and
+                   the names of the worksheets
+* **BaitProteinName** - the protein name for the bait protein, e.g. ER, FOXA1 etc.
+                        This is only used in the plot titles, it could be
+                        anything, however, if there is no bait protein it should
+                        be one of "IgG", "Empty", "None", or "Control".
+* **BaitProteinUniProtID** - the UniProt ID for the bait protein, e.g. P03372,
+                             P55317.  This is used to look up the fasta
+                             sequence. If there is no bait protein, then this
+                             should be left empty.
+* **SampleType** - whether the sample is a "Control" sample or something else.
+                   The samples marked as "Control" are used to identify
+                   background proteins. 
 
-The sample table can be created by hand using a spreadsheet, alternatively, the
-package provides the function `createSampleTable` to help you generate a
-suitable sample table.
+### Creating the sample table
 
-The function `createSampleTable` requires the directory that contains the PD
-outputs. It uses the file names to generate a sample table.
+The sample table can be created by hand using a spreadsheet (e.g. Excel) and
+then loaded into R. Alternatively, the package provides the function
+`createSampleTable` to help you generate a suitable sample table. 
 
-The function `createSampleTable` will attempt to guess the SampleName and
-BaitProteinName from the the protein file name. The function recognises outputs
-from Protein Discoverer version 1.4 and version 2.4.
+The `createSampleTable` function requires the directory that contains the PD
+outputs.
 
-For PD version 1.4 filenames are expected to have the following naming convention:
+The sample table will be  saved in the data directory as
+"XXXXX_sample_details.csv" where XXXXX is the name of the data directory.
+
+For example:
+
+```{r eval = FALSE}
+library(SimpleRIMEReport)
+sampleData <- createSampleTable("My_Data_Directory")
+```
+
+This will create a data.frame called `sampleData` and will save a copy of this
+to `My_Data_Directory/My_Data_Directory_sample_details.csv`.
+
+The function uses the names of files in the directory to populate the sample
+table.  The function will attempt to guess the SampleName and BaitProteinName
+from the the protein file name. The function recognises outputs from Protein
+Discoverer version 1.4 and version 2.4.
+
+For PD version 1.4 filenames are expected to have the following naming
+convention:
 
 `QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_proteingroups.txt`
 `QE_HF_<Date>_<PR_number>_<Initials>_<SampleName>_<BaitProteinName>_psms.txt`
@@ -78,33 +105,31 @@ gives:
 * SampleName: "Sample1_VEH"  
 * BaitProteinName: "ARID2"
 
+### Check the contents of the sample table 
+
 After generating the sample sheet it is important to check the details to make
-sure they are as you need them to be. In particular, the package will attempt
-to identify the correct UniProt ID for bait proteins, however, in some cases
-the same Gene Symbol will be associated with multiple UniProt IDs and you should
-select the correct one. Furthermore, if a custom database has been used, then
-the package will not able to identify the accession ID for the protein.
+sure they are as you need them to be.
 
-The sample table will be  saved in the data directory as
-"XXXXX_sample_details.csv" where XXXXX is the name of the data directory.
+In particular, the package will attempt to identify the correct UniProt ID for
+bait proteins, however, in some cases the same Gene Symbol will be associated
+with multiple UniProt IDs and you should select the correct one. Furthermore, if
+a custom database has been used, then the package will not able to identify the
+accession ID for the protein.
 
-If the file names do not follow the above convention, then you'll need to modify
-the sample sheet as necessary before proceeding. The sample table can either be
-modified directly in R, or you can open the saved version in a spreadsheet (e.g.
-Excel) and edit it and the load it back into R.
+In addition, the package will do it's best to fill in the SampleType
+column, however, it may not always be able to do this correctly. The SampleType
+column is used to identify the control samples, so it is important that this
+column is correct.
 
-```{r eval = FALSE}
-library(SimpleRIMEReport)
-sampleData <- createSampleTable("My_Data_Directory")
-```
+If the file names do not follow the above convention, then you'll definitely
+need to modify the sample sheet as necessary before proceeding. The sample table
+can either be modified directly in R, or you can open the saved version in a
+spreadsheet (e.g.  Excel), edit it and then load it back into R.
 
-This will create a table called `sampleData` and will save a copy of this to
-`My_Data_Directory/My_Data_Directory_sample_details.csv`.
-
-If you edit the report in Excel, you will then need to reload the sample table:
+If you edit the sample table in Excel, you will then need to reload it:
 
 ```{r eval = FALSE}
-library(readr)
+library(tidyverse)
 sampleData <- read_csv("My_Data_Directory/My_Data_Directory_sample_details.csv")
 ```
 
@@ -113,11 +138,8 @@ sampleData <- read_csv("My_Data_Directory/My_Data_Directory_sample_details.csv")
 Once you have adjusted the sample table you can use the function `createReport`
 to generate the report.
 
-If the "Master" column is present, the proteins are filtered to only keep
-proteins marked "IsMasterProtein".
-
 ```{r eval = FALSE}
-createReport(sampleData)
+createReport(sampleData, dataDir = "My_Data_Directory")
 ```
 
 This will create the report called:
@@ -126,18 +148,21 @@ This will create the report called:
 You can optionally provide an alternative name for the report e.g.:
 
 ```{r eval = FALSE}
-createReport(sampleData, outputFileName = "RIME_reports/A_New_RIME_Report.xlsx")
+createReport(sampleData,
+             dataDir = "My_Data_Directory",
+             outputFileName = "RIME_reports/A_New_RIME_Report.xlsx")
 ```
 
-This would create the report called `A_New_RIME_Report.xlsx` in the directory
+This would create a report called `A_New_RIME_Report.xlsx` in the directory
 `RIME_reports`. Note that the directory "RIME_reports" would not be created
 by the function, it would have to already exist.
 
 ### Annotation
 
-The packages uses an internal copy of the SwissProt FASTA file to annotate the
-proteins in the report. This is stored in the package and was last update 15th
-July 2025.
+The package includes an internal copy of the SwissProt FASTA file, which is used
+to annotate the proteins in the report and to find sequence information for the
+coverage plots. This is stored in the package and was last update 15th July
+2025.
 
 ### Custom FASTA files
 
@@ -147,7 +172,9 @@ be correctly annotated and so that the amino acid sequence is available for the
 plot.
 
 ```{r eval = FALSE}
-createReport(sampleData, additionalFasta = "My_Data_Directory/My_Protein.fasta")
+createReport(sampleData,
+             dataDir = "My_Data_Directory",
+             additionalFasta = "My_Data_Directory/My_Protein.fasta")
 ```
 
 The Accession, Gene ID and description for the annotation will be extracted
@@ -158,11 +185,12 @@ from the header for each sequence; the expected format is:
 This is the standard format of the header in FASTA files downloaded from
 UniProt, for example:
 
-`>sp|NUP98-HOXA9|NUP98-HOXA9_HUMAN OS = Homo sapiens`
+`>sp|P55317|FOXA1_HUMAN Hepatocyte nuclear factor 3-alpha OS=Homo sapiens OX=9606 GN=FOXA1`
 
-where `sp` means this is a SwissProt entry, the Accession is `NUP98-HOXA9` and
-the Gene ID is `NUP98-HOXA9_HUMAN`. Any further information is add to the
-Description.
+where `sp` means this is a SwissProt entry, the Accession is `P55317` and
+the Gene ID is `FOXA1_HUMAN`. Any further information on the line is added to
+the Description. The `{Database}` is not used by the function and could be
+anything.
 
 Accessions **must** be unique within the annotation. If the additional annotation
 derived from the FASTA file contains accessions that are already present in SwissProt
@@ -171,9 +199,4 @@ these will be dropped from the internal SwissProt annotation on the basis that t
 
 The new annotation will be checked for duplicated or missing accessions.
 
-## Session Information
-
-```{r info,echo = TRUE}
-sessionInfo()
-```
-
+--------------------------------------------------------------------------------

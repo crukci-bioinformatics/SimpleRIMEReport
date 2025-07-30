@@ -12,7 +12,6 @@
 
 <meta name="author" content="Ashley Sawle" />
 
-<meta name="date" content="2025-07-16" />
 
 <title>Simple RIME Report</title>
 
@@ -340,13 +339,20 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Simple RIME Report</h1>
 <h4 class="author">Ashley Sawle</h4>
-<h4 class="date">07/16/2025</h4>
+<h4 class="date">30/07/2025</h4>
 
 
 <div id="TOC">
 <ul>
 <li><a href="#generate-sample-table" id="toc-generate-sample-table">1.
-Generate sample table</a></li>
+Generate sample table</a>
+<ul>
+<li><a href="#sample-table-format" id="toc-sample-table-format">Sample
+table format</a></li>
+<li><a href="#creating-the-sample-table" id="toc-creating-the-sample-table">Creating the sample table</a></li>
+<li><a href="#check-the-contents-of-the-sample-table" id="toc-check-the-contents-of-the-sample-table">Check the contents of
+the sample table</a></li>
+</ul></li>
 <li><a href="#generate-the-report" id="toc-generate-the-report">2.
 Generate the report</a>
 <ul>
@@ -354,8 +360,6 @@ Generate the report</a>
 <li><a href="#custom-fasta-files" id="toc-custom-fasta-files">Custom
 FASTA files</a></li>
 </ul></li>
-<li><a href="#session-information" id="toc-session-information">Session
-Information</a></li>
 </ul>
 </div>
 
@@ -365,39 +369,60 @@ Information</a></li>
 the Protein and Peptides output of Proteome Discoverer.</p>
 <p>There are two steps to the process:</p>
 <ol style="list-style-type: decimal">
-<li>Generate a sample sheet</li>
+<li>Generate a sample table</li>
 <li>Generate the report</li>
 </ol>
 <div id="generate-sample-table" class="section level2">
 <h2>1. Generate sample table</h2>
+<p>The main input for the report is a sample table that contains the
+details of the samples that you want to include in the report. The
+sample table is a data frame that contains the details of each
+sample.</p>
+<p>The sample table can be created by hand or generated using the
+function <code>createSampleTable</code>.</p>
+<div id="sample-table-format" class="section level3">
+<h3>Sample table format</h3>
 <p>The sample table needs to contain 6 columns:</p>
 <ul>
-<li>ProteinFile - the file name for ‘protein groups’ data</li>
-<li>PeptideFile - the file name for ‘psms’ data</li>
-<li>SampleName - the name for the sample - this is used for the plot
-titles and the names of the worksheets</li>
-<li>BaitProteinName - the protein name for the bait protein, e.g. ER,
-FOXA1 etc. This is only used in the plot titles, it could be anything,
-however, if there is no bait protein it should be one of “IgG”, “Empty”,
-“None”, or “Control”.</li>
-<li>BaitProteinUniProtID - the UniProt ID for the bait protein
-e.g. P03372, P55317 this is used to look up the fasta sequence. If there
-is no bait protein, then this should be left empty.</li>
-<li>SampleType - whether the sample is a “control” sample or something
-else. This is used in determining which samples are used to identify
-background proteins.</li>
+<li><strong>ProteinFile</strong> - the file name for ‘protein groups’
+data</li>
+<li><strong>PeptideFile</strong> - the file name for ‘psms’ data</li>
+<li><strong>SampleName</strong> - the name for the sample - this is used
+for the plot titles and the names of the worksheets</li>
+<li><strong>BaitProteinName</strong> - the protein name for the bait
+protein, e.g. ER, FOXA1 etc. This is only used in the plot titles, it
+could be anything, however, if there is no bait protein it should be one
+of “IgG”, “Empty”, “None”, or “Control”.</li>
+<li><strong>BaitProteinUniProtID</strong> - the UniProt ID for the bait
+protein, e.g. P03372, P55317. This is used to look up the fasta
+sequence. If there is no bait protein, then this should be left
+empty.</li>
+<li><strong>SampleType</strong> - whether the sample is a “Control”
+sample or something else. The samples marked as “Control” are used to
+identify background proteins.</li>
 </ul>
-<p>The sample table can be created by hand using a spreadsheet,
-alternatively, the package provides the function
-<code>createSampleTable</code> to help you generate a suitable sample
-table.</p>
-<p>The function <code>createSampleTable</code> requires the directory
-that contains the PD outputs. It uses the file names to generate a
-sample table.</p>
-<p>The function <code>createSampleTable</code> will attempt to guess the
-SampleName and BaitProteinName from the the protein file name. The
-function recognises outputs from Protein Discoverer version 1.4 and
-version 2.4.</p>
+</div>
+<div id="creating-the-sample-table" class="section level3">
+<h3>Creating the sample table</h3>
+<p>The sample table can be created by hand using a spreadsheet
+(e.g. Excel) and then loaded into R. Alternatively, the package provides
+the function <code>createSampleTable</code> to help you generate a
+suitable sample table.</p>
+<p>The <code>createSampleTable</code> function requires the directory
+that contains the PD outputs.</p>
+<p>The sample table will be saved in the data directory as
+“XXXXX_sample_details.csv” where XXXXX is the name of the data
+directory.</p>
+<p>For example:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(SimpleRIMEReport)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>sampleData <span class="ot">&lt;-</span> <span class="fu">createSampleTable</span>(<span class="st">&quot;My_Data_Directory&quot;</span>)</span></code></pre></div>
+<p>This will create a data.frame called <code>sampleData</code> and will
+save a copy of this to
+<code>My_Data_Directory/My_Data_Directory_sample_details.csv</code>.</p>
+<p>The function uses the names of files in the directory to populate the
+sample table. The function will attempt to guess the SampleName and
+BaitProteinName from the the protein file name. The function recognises
+outputs from Protein Discoverer version 1.4 and version 2.4.</p>
 <p>For PD version 1.4 filenames are expected to have the following
 naming convention:</p>
 <p><code>QE_HF_&lt;Date&gt;_&lt;PR_number&gt;_&lt;Initials&gt;_&lt;SampleName&gt;_&lt;BaitProteinName&gt;_proteingroups.txt</code>
@@ -414,52 +439,54 @@ naming convention:</p>
 </li>
 <li>BaitProteinName: “ARID2”</li>
 </ul>
+</div>
+<div id="check-the-contents-of-the-sample-table" class="section level3">
+<h3>Check the contents of the sample table</h3>
 <p>After generating the sample sheet it is important to check the
-details to make sure they are as you need them to be. In particular, the
-package will attempt to identify the correct UniProt ID for bait
-proteins, however, in some cases the same Gene Symbol will be associated
-with multiple UniProt IDs and you should select the correct one.
-Furthermore, if a custom database has been used, then the package will
-not able to identify the accession ID for the protein.</p>
-<p>The sample table will be saved in the data directory as
-“XXXXX_sample_details.csv” where XXXXX is the name of the data
-directory.</p>
+details to make sure they are as you need them to be.</p>
+<p>In particular, the package will attempt to identify the correct
+UniProt ID for bait proteins, however, in some cases the same Gene
+Symbol will be associated with multiple UniProt IDs and you should
+select the correct one. Furthermore, if a custom database has been used,
+then the package will not able to identify the accession ID for the
+protein.</p>
+<p>In addition, the package will do it’s best to fill in the SampleType
+column, however, it may not always be able to do this correctly. The
+SampleType column is used to identify the control samples, so it is
+important that this column is correct.</p>
 <p>If the file names do not follow the above convention, then you’ll
-need to modify the sample sheet as necessary before proceeding. The
-sample table can either be modified directly in R, or you can open the
-saved version in a spreadsheet (e.g. Excel) and edit it and the load it
-back into R.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(SimpleRIMEReport)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>sampleData <span class="ot">&lt;-</span> <span class="fu">createSampleTable</span>(<span class="st">&quot;My_Data_Directory&quot;</span>)</span></code></pre></div>
-<p>This will create a table called <code>sampleData</code> and will save
-a copy of this to
-<code>My_Data_Directory/My_Data_Directory_sample_details.csv</code>.</p>
-<p>If you edit the report in Excel, you will then need to reload the
-sample table:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+definitely need to modify the sample sheet as necessary before
+proceeding. The sample table can either be modified directly in R, or
+you can open the saved version in a spreadsheet (e.g. Excel), edit it
+and then load it back into R.</p>
+<p>If you edit the sample table in Excel, you will then need to reload
+it:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>sampleData <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;My_Data_Directory/My_Data_Directory_sample_details.csv&quot;</span>)</span></code></pre></div>
+</div>
 </div>
 <div id="generate-the-report" class="section level2">
 <h2>2. Generate the report</h2>
 <p>Once you have adjusted the sample table you can use the function
 <code>createReport</code> to generate the report.</p>
-<p>If the “Master” column is present, the proteins are filtered to only
-keep proteins marked “IsMasterProtein”.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">createReport</span>(sampleData)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">createReport</span>(sampleData, <span class="at">dataDir =</span> <span class="st">&quot;My_Data_Directory&quot;</span>)</span></code></pre></div>
 <p>This will create the report called:
 <code>My_Data_Directory/My_Data_Directory.Simple_RIME_report.xlsx</code>.</p>
 <p>You can optionally provide an alternative name for the report
 e.g.:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">createReport</span>(sampleData, <span class="at">outputFileName =</span> <span class="st">&quot;RIME_reports/A_New_RIME_Report.xlsx&quot;</span>)</span></code></pre></div>
-<p>This would create the report called
-<code>A_New_RIME_Report.xlsx</code> in the directory
-<code>RIME_reports</code>. Note that the directory “RIME_reports” would
-not be created by the function, it would have to already exist.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">createReport</span>(sampleData,</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>             <span class="at">dataDir =</span> <span class="st">&quot;My_Data_Directory&quot;</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>             <span class="at">outputFileName =</span> <span class="st">&quot;RIME_reports/A_New_RIME_Report.xlsx&quot;</span>)</span></code></pre></div>
+<p>This would create a report called <code>A_New_RIME_Report.xlsx</code>
+in the directory <code>RIME_reports</code>. Note that the directory
+“RIME_reports” would not be created by the function, it would have to
+already exist.</p>
 <div id="annotation" class="section level3">
 <h3>Annotation</h3>
-<p>The packages uses an internal copy of the SwissProt FASTA file to
-annotate the proteins in the report. This is stored in the package and
-was last update 15th July 2025.</p>
+<p>The package includes an internal copy of the SwissProt FASTA file,
+which is used to annotate the proteins in the report and to find
+sequence information for the coverage plots. This is stored in the
+package and was last update 15th July 2025.</p>
 </div>
 <div id="custom-fasta-files" class="section level3">
 <h3>Custom FASTA files</h3>
@@ -467,17 +494,20 @@ was last update 15th July 2025.</p>
 analysis, these should also be provided to the <code>createReport</code>
 function so that the proteins can be correctly annotated and so that the
 amino acid sequence is available for the plot.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">createReport</span>(sampleData, <span class="at">additionalFasta =</span> <span class="st">&quot;My_Data_Directory/My_Protein.fasta&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">createReport</span>(sampleData,</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>             <span class="at">dataDir =</span> <span class="st">&quot;My_Data_Directory&quot;</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>             <span class="at">additionalFasta =</span> <span class="st">&quot;My_Data_Directory/My_Protein.fasta&quot;</span>)</span></code></pre></div>
 <p>The Accession, Gene ID and description for the annotation will be
 extracted from the header for each sequence; the expected format is:</p>
 <p><code>&gt;{Database}|{Accession}|{GeneID} {Description}</code></p>
 <p>This is the standard format of the header in FASTA files downloaded
 from UniProt, for example:</p>
-<p><code>&gt;sp|NUP98-HOXA9|NUP98-HOXA9_HUMAN OS = Homo sapiens</code></p>
+<p><code>&gt;sp|P55317|FOXA1_HUMAN Hepatocyte nuclear factor 3-alpha OS=Homo sapiens OX=9606 GN=FOXA1</code></p>
 <p>where <code>sp</code> means this is a SwissProt entry, the Accession
-is <code>NUP98-HOXA9</code> and the Gene ID is
-<code>NUP98-HOXA9_HUMAN</code>. Any further information is add to the
-Description.</p>
+is <code>P55317</code> and the Gene ID is <code>FOXA1_HUMAN</code>. Any
+further information on the line is added to the Description. The
+<code>{Database}</code> is not used by the function and could be
+anything.</p>
 <p>Accessions <strong>must</strong> be unique within the annotation. If
 the additional annotation derived from the FASTA file contains
 accessions that are already present in SwissProt these will be dropped
@@ -485,39 +515,8 @@ from the internal SwissProt annotation on the basis that the
 (presumably) modified entry in the additional FASTA is required.</p>
 <p>The new annotation will be checked for duplicated or missing
 accessions.</p>
+<hr />
 </div>
-</div>
-<div id="session-information" class="section level2">
-<h2>Session Information</h2>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
-<pre><code>## R version 4.5.1 (2025-06-13)
-## Platform: x86_64-pc-linux-gnu
-## Running under: Ubuntu 24.04.2 LTS
-## 
-## Matrix products: default
-## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
-## 
-## locale:
-##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
-## 
-## time zone: Europe/London
-## tzcode source: system (glibc)
-## 
-## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
-## 
-## loaded via a namespace (and not attached):
-##  [1] digest_0.6.37     R6_2.6.1          fastmap_1.2.0     xfun_0.52        
-##  [5] cachem_1.1.0      knitr_1.50        htmltools_0.5.8.1 rmarkdown_2.29   
-##  [9] lifecycle_1.0.4   cli_3.6.5         sass_0.4.10       jquerylib_0.1.4  
-## [13] compiler_4.5.1    tools_4.5.1       evaluate_1.0.4    bslib_0.9.0      
-## [17] yaml_2.3.10       rlang_1.1.6       jsonlite_2.0.0</code></pre>
 </div>
 
 
