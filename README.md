@@ -11,7 +11,7 @@ You can install the package from github with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("crukci-bioinformatics/PlateLayout")
+devtools::install_github("crukci-bioinformatics/SimpleRIMEReport")
 ```
 
 You can read the vignette by running the following command in R:
