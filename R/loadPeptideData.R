@@ -3,7 +3,7 @@ loadPeptideTable <- function(filePath) {
     # Read the peptide data file
     read_tsv(filePath, show_col_types = FALSE) %>%
         rename_with(~str_replace(.x,
-                                 pattern = ".*Accessions$",
+                                 pattern = "^Master Protein Accessions$",
                                  replacement = "Accession"))
 }
 
