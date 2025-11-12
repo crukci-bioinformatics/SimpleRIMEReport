@@ -7,7 +7,7 @@
 selectColumns <- function(x) {
     dplyr::select(x,
                   Accession,
-                  `Unique Peptides` = `# Unique Peptides`,
+                  `Unique Peptides` = `# Protein Unique Peptides`,
                   any_of("Master"))
 }
 
