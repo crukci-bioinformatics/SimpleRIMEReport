@@ -54,7 +54,11 @@ getNonSpecificProteins <- function(sampleTab) {
 #' @import stringr
 #' @import purrr
 filterCombinedTable <- function(sampleTab) {
-    non_specific <- getNonSpecificProteins(sampleTab)
+    if("Control" %in% sampleTab$SampleType) {
+        non_specific <- getNonSpecificProteins(sampleTab)
+    } else {
+        non_specific <- c()
+    }
 
     sampleTab %>%
         filter(SampleType != "Control") %>%
