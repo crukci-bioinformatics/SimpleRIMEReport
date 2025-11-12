@@ -51,4 +51,4 @@ annot <- spTab %>%
     mutate(Description = str_remove_all(Description, "^Full=|;.*$")) %>%
     mutate(Sequence = str_remove_all(Sequence, " "))
 
-usethis::use_data(annot, internal = TRUE, overwrite = TRUE)
+save(annot, file = "data/uniprot_annotation.rda", version = 3)

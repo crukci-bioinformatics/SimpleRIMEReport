@@ -45,7 +45,8 @@ createReport <- function(sampleTable,
     sampleTable <- sampleTable %>%
         mutate(across(ends_with("File"), ~str_c(dataDir, "/", .x)))
 
-    #Note `annot` is loaded automatically from R/sysdata.rda
+    #Note `annot` is loaded from data/uniprot_annotation.rda
+    data(uniprot_annotation)
     annotTab <- annot
 
     # Load  any additional fasta files and add to the annotation

@@ -91,7 +91,9 @@ createSampleTable <- function(dataDir) {
     }
     tab <- map_df(protFiles, filenametotable)
 
-    #Note `annot` is loaded automatically from R/sysdata.rda
+    #Note `annot` is loaded from data/uniprot_annotation.rda
+    data(uniprot_annotation)
+
     uid <- filter(annot, GeneSymbol %in% tab$BaitProteinName) %>%
         select(BaitProteinName = GeneSymbol, Accession) %>%
         group_by(BaitProteinName) %>%
